@@ -30,6 +30,7 @@ export const Categories = ({ categories, selected, onChange }: Props) => {
       <ScrollView
         horizontal
         contentContainerStyle={styles.categories_content_container}
+        showsHorizontalScrollIndicator={false}
       >
         {categories?.map((category, index) => (
           <Pressable

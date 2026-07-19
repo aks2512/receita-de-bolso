@@ -83,7 +83,7 @@ export default function NewRecipe() {
   };
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }}>
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
       <ThemedView style={styles.container}>
         <SafeAreaView style={styles.safeArea}>
           <ScrollView

@@ -43,7 +43,10 @@ export const Header = ({ recipe, onBack }: Props) => {
             ...styles.button,
             backgroundColor: colors.warning,
           }}
-          onPress={() => removeRecipe(recipe.id as string)}
+          onPress={() => {
+            removeRecipe(recipe.id as string);
+            onBack();
+          }}
         >
           <Image
             style={{ width: 16, height: 16 }}
@@ -71,6 +74,8 @@ const styles = StyleSheet.create({
   button: {
     padding: 8,
     borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
   },
   buttons: {
     gap: 8,
