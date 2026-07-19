@@ -12,7 +12,6 @@ type Props = {
   label?: string;
   placeholder: string;
   description?: string;
-  error?: string;
   options: Option[];
 };
 
@@ -23,7 +22,6 @@ export default function Select({
   description,
   options,
   placeholder,
-  error,
 }: Props) {
   const scheme = useColorScheme();
   const colors =
@@ -33,7 +31,7 @@ export default function Select({
     <Controller
       name={name}
       control={control}
-      render={({ field }) => (
+      render={({ field, fieldState: { error } }) => (
         <View style={styles.container}>
           <View style={styles.label_container}>
             {label && <ThemedText themeColor="terciary">{label}</ThemedText>}
@@ -66,9 +64,9 @@ export default function Select({
             value={field.value}
             onChange={field.onChange}
           />
-          {error && (
+          {error?.message && (
             <ThemedText type="small" themeColor="warning">
-              {error}
+              {error.message}
             </ThemedText>
           )}
         </View>

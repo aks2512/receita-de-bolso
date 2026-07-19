@@ -1802,19 +1802,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@expo/ui@npm:~0.2.0-beta.9":
-  version: 0.2.0-canary-20260121-a63c0dd
-  resolution: "@expo/ui@npm:0.2.0-canary-20260121-a63c0dd"
-  dependencies:
-    sf-symbols-typescript: "npm:^2.1.0"
-  peerDependencies:
-    expo: "*"
-    react: "*"
-    react-native: "*"
-  checksum: 10c0/6525a9f8f068730d6c30bcb9bd233188a451f9475382f3e5a45271a76beb7b8bb6cc43088e78d73130a16ee5cde7ea042578477859be77735f34f82955e2374d
-  languageName: node
-  linkType: hard
-
 "@expo/vector-icons@npm:^15.0.3":
   version: 15.1.1
   resolution: "@expo/vector-icons@npm:15.1.1"
@@ -6889,7 +6876,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "receita-de-bolso@workspace:."
   dependencies:
-    "@expo/ui": "npm:~0.2.0-beta.9"
     "@hookform/resolvers": "npm:^5.4.0"
     "@react-native-async-storage/async-storage": "npm:2.2.0"
     "@types/react": "npm:~19.1.10"

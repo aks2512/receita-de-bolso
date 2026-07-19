@@ -6,12 +6,7 @@ import { Ingredient } from "@/components/ingredient";
 import { Step } from "@/components/step";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import {
-  BottomTabInset,
-  Colors,
-  MaxContentWidth,
-  Spacing,
-} from "@/constants/theme";
+import { Colors, MaxContentWidth, Spacing } from "@/constants/theme";
 import { useRecipeStore } from "@/stores/useRecipeStore";
 import { generateRecipePDF } from "@/utils/export";
 import { RecipeForm } from "@/validations/recipe-schema";
@@ -93,9 +88,7 @@ const styles = StyleSheet.create({
   scrollView: {
     width: "100%",
   },
-  scrollContent: {
-    paddingBottom: BottomTabInset + Spacing.three,
-  },
+  scrollContent: {},
   main: {
     alignItems: "stretch",
     justifyContent: "flex-start",

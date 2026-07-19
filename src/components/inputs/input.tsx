@@ -9,7 +9,6 @@ type Props = Omit<ComponentProps<typeof TextInput>, "style"> & {
   name: string;
   label?: string;
   description?: string;
-  error?: string;
   maskFunction?: (value?: string) => string;
 };
 
@@ -17,7 +16,6 @@ export const Input = ({
   control,
   name,
   label,
-  error,
   description,
   maskFunction,
   ...rest
@@ -30,7 +28,7 @@ export const Input = ({
     <Controller
       name={name}
       control={control}
-      render={({ field }) => (
+      render={({ field, fieldState: { error } }) => (
         <View style={styles.container}>
           <View style={styles.label_container}>
             {label && <ThemedText themeColor="terciary">{label}</ThemedText>}
@@ -49,9 +47,9 @@ export const Input = ({
             value={field.value}
             {...rest}
           />
-          {error && (
+          {error?.message && (
             <ThemedText type="small" themeColor="warning">
-              {error}
+              {error.message}
             </ThemedText>
           )}
         </View>
