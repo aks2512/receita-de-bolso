@@ -1,56 +1,120 @@
-# Welcome to your Expo app 👋
+# 📱 Receita de Bolso
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+O **Receita de Bolso** é um aplicativo mobile desenvolvido em React Native com Expo, projetado para ser o seu livro de receitas digital pessoal. Com ele, você pode buscar inspirações culinárias, organizar suas receitas por categorias, criar seus próprios pratos salvando-os localmente e até exportar as receitas em formato PDF para compartilhar com quem quiser.
 
-## Get started
+---
 
-1. Install dependencies
+## 🚀 Funcionalidades Principais
 
-   ```bash
-   npm install
-   ```
+O aplicativo é estruturado em três telas principais focadas na experiência do usuário e na praticidade na cozinha:
 
-2. Start the app
+### 1. 🏠 Tela Home (Listagem)
 
-   ```bash
-   npx expo start
-   ```
+- **Busca Inteligente**: Barra de pesquisa para encontrar receitas rapidamente pelo nome.
+- **Filtro por Categorias**: Botões rápidos para segmentar receitas (ex: Doces, Massas, Saudável, etc.).
+- **Exportação Rápida**: Opção de exportar a listagem atual ou receitas selecionadas diretamente para um arquivo PDF.
 
-In the output, you'll find options to open the app in a
+### 2. ➕ Tela Nova Receita (Cadastro)
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- **Formulário Completo**: Campos validados para preenchimento de nome, descrição, ingredientes, passo a passo e categoria.
+- **Upload de Imagem**: Integração com a galeria do celular utilizando `expo-image-picker`.
+- **Persistência Local**: Todas as receitas criadas são salvas com segurança no armazenamento interno do celular utilizando o `AsyncStorage` (Local Storage).
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+### 3. 📖 Detalhes da Receita
 
-## Get a fresh project
+- **Visualização Imersiva**: Exibição da foto de capa da receita em alta performance com `expo-image`.
+- **Organização Clara**: Divisão visual limpa entre ingredientes e as etapas do passo a passo.
+- **Gerenciamento Completo**: Opções nativas para:
+  - ✏️ **Editar**: Modificar qualquer informação ou foto da receita.
+  - 🗑️ **Excluir**: Remover a receita permanentemente do dispositivo com alerta de confirmação.
+  - 📄 **Exportar**: Gerar um PDF formatado e bonito da receita específica para impressão ou compartilhamento.
 
-When you're ready, run:
+---
+
+## 🛠️ Tecnologias e Ferramentas Utilizadas
+
+Baseado nas especificações técnicas do ecossistema do projeto:
+
+- **Core do App**: `React Native` (v0.74+) & `Expo` (v51) — Garantindo performance nativa e acesso facilitado às APIs do dispositivo.
+- **Navegação**: `Expo Router` (v3) — Roteamento baseado em arquivos baseado nos padrões mais modernos da web e mobile.
+- **Estilização e Temas**: `StyleSheet` nativo integrado com suporte a **Dark Mode** e **Light Mode** dinâmicos via `useColorScheme`.
+- **Gerenciamento de Formulários**: `React Hook Form` — Para captura de dados de forma performática e sem re-renderizações desnecessárias.
+- **Manipulação de Imagens**:
+  - `expo-image-picker` — Para acessar a galeria de fotos do usuário com controle de permissões.
+  - `expo-image` — Componente de imagem otimizado com suporte a cache agressivo e transições suaves.
+- **Geradores de PDF**: `expo-print` & `expo-sharing` — Utilizados para converter estruturas HTML em arquivos PDF e abrir o menu de compartilhamento nativo do iOS/Android.
+
+---
+
+## 📦 Como Iniciar o Projeto
+
+Siga os passos abaixo para clonar o repositório, instalar as dependências e rodar o projeto localmente.
+
+### Pré-requisitos
+
+- **Node.js** (Versão 18 ou superior recomendada)
+- Gerenciador de pacotes **npm** ou **yarn**
+- Aplicativo **Expo Go** instalado no seu celular (disponível na App Store e Google Play) se for testar em dispositivo físico.
+
+### 1. Clonar o Repositório e Instalar Dependências
+
+No seu terminal, execute os comandos:
 
 ```bash
-npm run reset-project
+# Clone o repositório
+git clone https://github.com
+
+# Acesse a pasta do projeto
+cd receita-de-bolso
+
+# Instale todas as dependências necessárias
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### 2. Iniciar o Servidor de Desenvolvimento
 
-### Other setup steps
+Para rodar o projeto com o Metro Bundler do Expo:
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+```bash
+npx expo start
+```
 
-## Learn more
+- **No Celular**: Abra a câmera do seu celular e escaneie o **QR Code** que apareceu no terminal (no Android, use o app Expo Go para escanear).
+- **No Emulador**: Pressione `a` no teclado para abrir no emulador Android ou `i` para abrir no simulador iOS.
 
-To learn more about developing your project with Expo, look at the following resources:
+_Dica: Se encontrar problemas com cache de fontes ou rotas ao iniciar, limpe o cache rodando `npx expo start -c`._
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+---
 
-## Join the community
+## 🏗️ Como Gerar a Build e Atualizações (EAS)
 
-Join our community of developers creating universal apps.
+Este projeto está configurado para utilizar o **EAS (Expo Application Services)** para geração de builds e atualizações em tempo real.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+### 1. Gerar uma Build para Produção/Testes
+
+Certifique-se de estar logado na sua conta Expo (`npx expo login`) e que possui o EAS CLI instalado globalmente (`npm install -g eas-cli`).
+
+Para gerar o arquivo instalável (`.apk` para Android ou `.ipa` para iOS):
+
+```bash
+# Build para Android
+npx eas build --platform android --profile production
+
+# Build para iOS
+npx eas build --platform ios --profile production
+
+# Build para ambas as plataformas simultaneamente
+npx eas build --platform all
+```
+
+_O Expo processará a build nos servidores deles em nuvem e, ao final, fornecerá o link de download ou a submissão direta para as lojas._
+
+### 2. Enviar Atualizações Rápidas (Over-The-Air)
+
+Se você corrigiu um bug no código JavaScript/TypeScript (como no componente de imagem ou no formulário) e **não adicionou nenhuma biblioteca nativa nova**, você não precisa gerar uma build nova. Pode enviar a correção direto para o celular dos usuários:
+
+```bash
+npx eas update --channel production --message "Fix: Correção no botão de deletar imagem e fluxo do formulário"
+```
+
+---
