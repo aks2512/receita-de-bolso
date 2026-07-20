@@ -104,7 +104,7 @@ export function ImageInput({
                     alt="Upload"
                   />
                   <ThemedText themeColor="quaternary">
-                    Faça o upload de uma imagem
+                    Adicione uma imagem
                   </ThemedText>
                 </View>
               )}

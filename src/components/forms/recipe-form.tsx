@@ -145,10 +145,10 @@ export function RecipeForm({ type = "register", formData }: Props) {
                   name="time"
                   label="Tempo de preparo"
                   keyboardType="number-pad"
-                  description="(tempo em minutos)"
+                  description="(minutos)"
                   maskFunction={onlyNumbersMask}
                   control={control}
-                  placeholder="Digite o tempo de preparo"
+                  placeholder="Digite o tempo"
                 />
               </View>
               <View style={styles.ingredients_container}>
