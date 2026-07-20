@@ -87,7 +87,6 @@ const styles = StyleSheet.create({
     gap: Spacing.two,
   },
   dropdown: {
-    height: 50,
     borderWidth: 1,
     borderRadius: Spacing.two,
     paddingHorizontal: Spacing.two,

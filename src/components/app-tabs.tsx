@@ -1,13 +1,15 @@
 import { useColorScheme } from "react-native";
 
-import { Colors } from "@/constants/theme";
+import { Colors, Spacing } from "@/constants/theme";
 import { Image } from "expo-image";
 import { Tabs } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function AppTabs() {
   const scheme = useColorScheme();
   const colors =
     Colors[scheme === undefined || scheme === null ? "light" : scheme];
+  const insets = useSafeAreaInsets();
 
   return (
     <Tabs
@@ -20,9 +22,10 @@ export default function AppTabs() {
           borderColor: colors.secondary,
           justifyContent: "center",
           alignItems: "baseline",
-          height: 140,
+          height: 120 + insets.bottom,
           flexDirection: "row",
-          paddingTop: 16,
+          paddingTop: Spacing.three,
+          paddingBottom: insets.bottom > 0 ? insets.bottom : Spacing.three,
         },
         headerShown: false,
       }}

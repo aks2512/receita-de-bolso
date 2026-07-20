@@ -124,6 +124,7 @@ export function ImageInput({
 const styles = StyleSheet.create({
   container: {
     gap: Spacing.two,
+    padding: Spacing.two,
   },
   label_container: {
     flexDirection: "row",

@@ -1,4 +1,4 @@
-import { Platform, ScrollView, StyleSheet, View } from "react-native";
+import { Alert, Platform, ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Header } from "@/components/header";
@@ -36,6 +36,7 @@ export default function RecipeScreen() {
               onRemove={async () => {
                 await removeRecipe(recipe.id as string);
                 router.replace("/(tabs)");
+                Alert.alert("Sucesso", "Receita deletada com sucesso!");
               }}
               onEdit={() => router.replace(`/recipes/${id}/edit`)}
             />
