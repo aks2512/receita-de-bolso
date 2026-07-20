@@ -25,7 +25,7 @@ export const Colors = {
     blue: "#16A3D7",
   },
   dark: {
-    text: "#ffffff",
+    text: "#000000",
     background: "#F9F9F9",
     backgroundElement: "#212225",
     backgroundSelected: "#2E3135",

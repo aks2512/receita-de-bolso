@@ -29,7 +29,9 @@ export const Header = ({ name, onExport, onEdit, onRemove, onBack }: Props) => {
             />
           </Pressable>
         )}
-        <ThemedText type="title">{name}</ThemedText>
+        <ThemedText type="title" style={styles.title}>
+          {name}
+        </ThemedText>
       </View>
       <View style={styles.buttons}>
         {onEdit && (
@@ -88,6 +90,9 @@ const styles = StyleSheet.create({
     gap: Spacing.three,
     paddingBottom: Spacing.two,
     borderBottomWidth: 1,
+  },
+  title: {
+    width: "100%",
   },
   button: {
     width: 40,
