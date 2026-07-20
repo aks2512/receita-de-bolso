@@ -20,6 +20,11 @@ export const RECIPE_CATEGORIES = [
     value: "pastas",
   },
   {
+    text: "Pães",
+    image: require("@/assets/images/icons/breads.svg"),
+    value: "breads",
+  },
+  {
     text: "Oriental",
     image: require("@/assets/images/icons/asian.svg"),
     value: "asian",
@@ -29,27 +34,18 @@ export const RECIPE_CATEGORIES = [
     image: require("@/assets/images/icons/cakes.svg"),
     value: "cakes",
   },
+  {
+    text: "Biscoitos",
+    image: require("@/assets/images/icons/cookies.svg"),
+    value: "cookies",
+  },
+  {
+    text: "Sobremesas",
+    image: require("@/assets/images/icons/desserts.svg"),
+    value: "desserts",
+  },
 ];
 
-export const RECIPE_CATEGORIES_OPTIONS = [
-  {
-    label: "Saladas",
-    value: "salads",
-  },
-  {
-    label: "Sopas",
-    value: "soups",
-  },
-  {
-    label: "Massas",
-    value: "pastas",
-  },
-  {
-    label: "Oriental",
-    value: "asian",
-  },
-  {
-    label: "Bolos",
-    value: "cakes",
-  },
-];
+export const RECIPE_CATEGORIES_OPTIONS = RECIPE_CATEGORIES.filter(
+  (category) => category.value !== "all",
+).map((category) => ({ label: category.text, value: category.value }));

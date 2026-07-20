@@ -1,4 +1,4 @@
-import { Colors } from "@/constants/theme";
+import { Colors, Spacing } from "@/constants/theme";
 import React from "react";
 import { StyleSheet, useColorScheme, View } from "react-native";
 import { ThemedText } from "./themed-text";
@@ -29,18 +29,18 @@ export const Step = ({ number, description }: Props) => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 8,
+    padding: Spacing.two,
     borderBottomWidth: 1,
     width: "100%",
     alignItems: "center",
     flexDirection: "row",
-    gap: 8,
+    gap: Spacing.two,
   },
   number: {
     borderRadius: 1000,
-    width: 24,
+    width: Spacing.four,
     textAlign: "center",
-    height: 24,
+    height: Spacing.four,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",

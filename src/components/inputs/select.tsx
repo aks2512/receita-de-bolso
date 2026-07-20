@@ -1,4 +1,4 @@
-import { Colors } from "@/constants/theme";
+import { Colors, Spacing } from "@/constants/theme";
 import { Option } from "@/types/option";
 import React from "react";
 import { Controller } from "react-hook-form";
@@ -79,24 +79,24 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     flexDirection: "column",
-    gap: 8,
+    gap: Spacing.two,
   },
   label_container: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: Spacing.two,
   },
   dropdown: {
     height: 50,
     borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 16,
+    borderRadius: Spacing.two,
+    paddingHorizontal: Spacing.two,
+    paddingVertical: Spacing.three,
     backgroundColor: "#ffffff",
   },
   menu: {
     borderWidth: 1,
-    borderRadius: 8,
+    borderRadius: Spacing.two,
     shadowColor: "transparent",
     shadowOpacity: 0,
     shadowRadius: 0,
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     fontWeight: 300,
   },
   item: {
-    paddingHorizontal: 8,
+    paddingHorizontal: Spacing.two,
   },
   item_text: {
     fontSize: 14,

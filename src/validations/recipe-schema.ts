@@ -12,7 +12,7 @@ const StepSchema = yup.object({
 
 export const RecipeSchema = yup.object({
   id: yup.string().optional(),
-  image: yup.string().optional(),
+  image: yup.string().nullable(),
   name: yup
     .string()
     .required("Campo obrigatório")
@@ -27,4 +27,4 @@ export const RecipeSchema = yup.object({
   steps: yup.array(StepSchema).min(1, "Mínimo de um passo"),
 });
 
-export type RecipeForm = yup.InferType<typeof RecipeSchema>;
+export type IRecipeForm = yup.InferType<typeof RecipeSchema>;

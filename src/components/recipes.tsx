@@ -1,6 +1,6 @@
-import { Colors } from "@/constants/theme";
+import { Colors, Spacing } from "@/constants/theme";
 import { generateRecipePDF } from "@/utils/export";
-import { RecipeForm } from "@/validations/recipe-schema";
+import { IRecipeForm } from "@/validations/recipe-schema";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
 import React from "react";
@@ -8,7 +8,7 @@ import { Pressable, StyleSheet, useColorScheme, View } from "react-native";
 import { ThemedText } from "./themed-text";
 
 type Props = {
-  recipes: RecipeForm[];
+  recipes: IRecipeForm[];
 };
 
 export const Recipes = ({ recipes }: Props) => {
@@ -77,13 +77,13 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     flexDirection: "column",
-    gap: 8,
+    gap: Spacing.two,
   },
   list: {
     display: "flex",
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 16,
+    gap: Spacing.three,
   },
   link: {
     lineHeight: 0,
@@ -94,26 +94,26 @@ const styles = StyleSheet.create({
     width: "100%",
     maxWidth: 352,
     minWidth: 300,
-    borderRadius: 8,
+    borderRadius: Spacing.two,
     alignSelf: "flex-start",
     overflow: "hidden",
   },
   item_time: {
     position: "absolute",
-    top: 10,
-    left: 10,
+    top: Spacing.two,
+    left: Spacing.two,
     zIndex: 1,
-    padding: 8,
-    borderRadius: 8,
+    padding: Spacing.two,
+    borderRadius: Spacing.two,
     backgroundColor: "#ffffff",
   },
   item_export: {
     position: "absolute",
-    top: 10,
-    right: 10,
+    top: Spacing.two,
+    right: Spacing.two,
     zIndex: 1,
-    padding: 4,
-    borderRadius: 8,
+    padding: Spacing.one,
+    borderRadius: Spacing.two,
     backgroundColor: "#ffffff",
   },
   item_image: {
@@ -125,6 +125,6 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
-    padding: 16,
+    padding: Spacing.three,
   },
 });

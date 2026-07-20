@@ -1,4 +1,4 @@
-import { Colors } from "@/constants/theme";
+import { Colors, Spacing } from "@/constants/theme";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import { Controller } from "react-hook-form";
@@ -54,88 +54,90 @@ export function ImageInput({
       const selectedUri = firstAsset.uri;
       return selectedUri;
     }
-    return undefined;
+    return null;
   };
 
   return (
     <Controller
       name={name}
       control={control}
-      render={({ field }) => (
-        <View style={styles.container}>
-          <View style={styles.label_container}>
-            {label && <ThemedText themeColor="terciary">{label}</ThemedText>}
-            {description && (
-              <ThemedText type="small" themeColor="quaternary">
-                {description}
+      render={({ field }) => {
+        return (
+          <View style={styles.container}>
+            <View style={styles.label_container}>
+              {label && <ThemedText themeColor="terciary">{label}</ThemedText>}
+              {description && (
+                <ThemedText type="small" themeColor="quaternary">
+                  {description}
+                </ThemedText>
+              )}
+            </View>
+            <Pressable
+              style={{ ...styles.image_box, backgroundColor: colors.secondary }}
+              onPress={async () => field.onChange(await pickImage())}
+            >
+              {field.value ? (
+                <View style={styles.preview_container}>
+                  <Image
+                    source={{ uri: field.value }}
+                    style={styles.preview_image}
+                  />
+                  <Pressable
+                    style={{
+                      ...styles.button,
+                      backgroundColor: colors.warning,
+                    }}
+                    onPress={() => field.onChange(null)}
+                  >
+                    <Image
+                      style={{ width: 16, height: 16 }}
+                      source={require("@/assets/images/icons/trash.svg")}
+                      alt="Remover"
+                    />
+                  </Pressable>
+                </View>
+              ) : (
+                <View style={styles.placeholder_container}>
+                  <Image
+                    style={{ width: 100, height: 100 }}
+                    source={require("@/assets/images/icons/upload.svg")}
+                    alt="Upload"
+                  />
+                  <ThemedText themeColor="quaternary">
+                    Faça o upload de uma imagem
+                  </ThemedText>
+                </View>
+              )}
+            </Pressable>
+            {error && (
+              <ThemedText type="small" themeColor="warning">
+                {error}
               </ThemedText>
             )}
           </View>
-          <Pressable
-            style={{ ...styles.image_box, backgroundColor: colors.secondary }}
-            onPress={async () => field.onChange(await pickImage())}
-          >
-            {field.value !== undefined ? (
-              <View style={styles.preview_container}>
-                <Image
-                  source={{ uri: field.value }}
-                  style={styles.preview_image}
-                />
-                <Pressable
-                  style={{
-                    ...styles.button,
-                    backgroundColor: colors.warning,
-                  }}
-                  onPress={() => field.onChange(undefined)}
-                >
-                  <Image
-                    style={{ width: 16, height: 16 }}
-                    source={require("@/assets/images/icons/trash.svg")}
-                    alt="Remover"
-                  />
-                </Pressable>
-              </View>
-            ) : (
-              <View style={styles.placeholder_container}>
-                <Image
-                  style={{ width: 100, height: 100 }}
-                  source={require("@/assets/images/icons/upload.svg")}
-                  alt="Upload"
-                />
-                <ThemedText themeColor="quaternary">
-                  Faça o upload de uma imagem
-                </ThemedText>
-              </View>
-            )}
-          </Pressable>
-          {error && (
-            <ThemedText type="small" themeColor="warning">
-              {error}
-            </ThemedText>
-          )}
-        </View>
-      )}
+        );
+      }}
     />
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    gap: 8,
+    gap: Spacing.two,
   },
   label_container: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: Spacing.two,
   },
   image_box: {
     width: "100%",
     height: 212,
-    borderRadius: 8,
+    borderRadius: Spacing.two,
     justifyContent: "center",
     alignItems: "center",
     overflow: "hidden",
-    gap: 8,
+    gap: Spacing.two,
   },
   preview_container: {
     width: "100%",
@@ -153,9 +155,9 @@ const styles = StyleSheet.create({
   },
   button: {
     position: "absolute",
-    top: 8,
-    right: 8,
-    padding: 8,
-    borderRadius: 8,
+    top: Spacing.two,
+    right: Spacing.two,
+    padding: Spacing.two,
+    borderRadius: Spacing.two,
   },
 });

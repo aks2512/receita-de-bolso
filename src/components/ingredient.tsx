@@ -1,4 +1,4 @@
-import { Colors } from "@/constants/theme";
+import { Colors, Spacing } from "@/constants/theme";
 import React from "react";
 import { StyleSheet, useColorScheme, View } from "react-native";
 import { ThemedText } from "./themed-text";
@@ -22,7 +22,7 @@ export const Ingredient = ({ name, quantity }: Props) => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    padding: Spacing.three,
     borderBottomWidth: 1,
     width: "100%",
     justifyContent: "space-between",

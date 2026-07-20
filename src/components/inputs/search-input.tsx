@@ -57,8 +57,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.two,
     borderWidth: 1,
-    borderRadius: 8,
-    gap: 8,
+    borderRadius: Spacing.two,
+    gap: Spacing.two,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -74,9 +74,9 @@ const styles = StyleSheet.create({
     }),
   },
   image: {
-    width: 24,
-    height: 24,
+    width: Spacing.four,
+    height: Spacing.four,
     position: "absolute",
-    right: 16,
+    right: Spacing.three,
   },
 });

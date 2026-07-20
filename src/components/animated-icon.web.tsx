@@ -70,7 +70,7 @@ export function AnimatedIcon() {
       >
         <Image
           style={styles.image}
-          source={require("@/assets/expo.icon/Assets/expo-symbol 2.svg")}
+          source={require("@/assets/images/icon.png")}
         />
       </Animated.View>
     </View>

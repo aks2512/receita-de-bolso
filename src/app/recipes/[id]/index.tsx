@@ -9,14 +9,15 @@ import { ThemedView } from "@/components/themed-view";
 import { Colors, MaxContentWidth, Spacing } from "@/constants/theme";
 import { useRecipeStore } from "@/stores/useRecipeStore";
 import { generateRecipePDF } from "@/utils/export";
-import { RecipeForm } from "@/validations/recipe-schema";
+import { IRecipeForm } from "@/validations/recipe-schema";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
 
 export default function RecipeScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const findRecipeById = useRecipeStore((state) => state.findRecipeById);
-  const recipe = findRecipeById(id) as RecipeForm;
+  const removeRecipe = useRecipeStore((state) => state.deleteRecipe);
+  const recipe = findRecipeById(id) as IRecipeForm;
   const router = useRouter();
 
   return (
@@ -29,9 +30,14 @@ export default function RecipeScreen() {
         >
           <ThemedView style={styles.main}>
             <Header
-              recipe={recipe}
+              name={recipe.name}
               onBack={() => router.replace("/(tabs)")}
               onExport={async () => await generateRecipePDF(recipe)}
+              onRemove={async () => {
+                await removeRecipe(recipe.id as string);
+                router.replace("/(tabs)");
+              }}
+              onEdit={() => router.replace(`/recipes/${id}/edit`)}
             />
             <Image
               style={styles.image}
@@ -74,7 +80,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     ...Platform.select({
       web: {
-        paddingTop: 20,
+        paddingTop: Spacing.four,
       },
     }),
     backgroundColor: Colors.background,
@@ -95,11 +101,12 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: Spacing.four,
     width: "100%",
+    backgroundColor: Colors.background,
   },
   image: {
     width: "100%",
     height: 304,
-    borderRadius: 8,
+    borderRadius: Spacing.two,
   },
   list: {
     flexDirection: "column",

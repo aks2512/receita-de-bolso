@@ -1,4 +1,4 @@
-import { Colors } from "@/constants/theme";
+import { Colors, Spacing } from "@/constants/theme";
 import { Image } from "expo-image";
 import {
   Pressable,
@@ -74,12 +74,12 @@ const styles = StyleSheet.create({
   container: {
     display: "flex",
     flexDirection: "column",
-    gap: 8,
+    gap: Spacing.two,
     overflowX: "auto",
   },
   categories_content_container: {
     display: "flex",
-    gap: 10,
+    gap: Spacing.two,
     alignItems: "flex-start",
   },
   category_container: {
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   category_image: {
     width: 80,
     height: 80,
-    borderRadius: 8,
-    padding: 10,
+    borderRadius: Spacing.two,
+    padding: Spacing.two,
   },
 });

@@ -2,9 +2,9 @@ import { Platform, ScrollView, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Categories } from "@/components/categories";
+import { Header } from "@/components/header";
 import { SearchInput } from "@/components/inputs/search-input";
 import { Recipes } from "@/components/recipes";
-import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { RECIPE_CATEGORIES } from "@/constants/categories";
 import { Colors, MaxContentWidth, Spacing } from "@/constants/theme";
@@ -58,9 +58,7 @@ export default function HomeScreen() {
           showsVerticalScrollIndicator={false}
         >
           <ThemedView style={styles.main}>
-            <ThemedText type="title" style={styles.title}>
-              Home
-            </ThemedText>
+            <Header name="Home" />
             <SearchInput
               name="search"
               control={control}
@@ -108,8 +106,6 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: Spacing.four,
     width: "100%",
-  },
-  title: {
-    textAlign: "left",
+    backgroundColor: Colors.background,
   },
 });

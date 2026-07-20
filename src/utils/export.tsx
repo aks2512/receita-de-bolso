@@ -1,4 +1,4 @@
-import { RecipeForm } from "@/validations/recipe-schema";
+import { IRecipeForm } from "@/validations/recipe-schema";
 import { File } from "expo-file-system";
 import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
@@ -29,7 +29,7 @@ const getLocalImageAsBase64 = async (
   }
 };
 
-export const generateRecipePDF = async (recipe: RecipeForm) => {
+export const generateRecipePDF = async (recipe: IRecipeForm) => {
   try {
     const recipeImageBase64 = await getLocalImageAsBase64(
       recipe.image as string,

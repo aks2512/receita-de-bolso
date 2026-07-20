@@ -1,4 +1,4 @@
-import { Colors } from "@/constants/theme";
+import { Colors, Spacing } from "@/constants/theme";
 import React, { ComponentProps } from "react";
 import { Controller } from "react-hook-form";
 import { StyleSheet, TextInput, useColorScheme, View } from "react-native";
@@ -62,19 +62,19 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     flexDirection: "column",
-    gap: 8,
+    gap: Spacing.two,
   },
   label_container: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: Spacing.two,
   },
   input: {
     width: "100%",
     borderWidth: 1,
-    paddingVertical: 16,
-    paddingHorizontal: 8,
-    borderRadius: 8,
+    paddingVertical: Spacing.three,
+    paddingHorizontal: Spacing.two,
+    borderRadius: Spacing.two,
     backgroundColor: "#ffffff",
   },
 });

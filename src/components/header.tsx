@@ -1,59 +1,76 @@
-import { Colors } from "@/constants/theme";
-import { useRecipeStore } from "@/stores/useRecipeStore";
-import { generateRecipePDF } from "@/utils/export";
-import { RecipeForm } from "@/validations/recipe-schema";
+import { Colors, Spacing } from "@/constants/theme";
 import { Image } from "expo-image";
 import React from "react";
 import { Pressable, StyleSheet, useColorScheme, View } from "react-native";
 import { ThemedText } from "./themed-text";
 
 type Props = {
-  recipe: RecipeForm;
-  onBack: () => void;
-  onExport: () => void;
+  name: string;
+  onBack?: () => void;
+  onExport?: () => void;
+  onEdit?: () => void;
+  onRemove?: () => void;
 };
 
-export const Header = ({ recipe, onBack }: Props) => {
-  const removeRecipe = useRecipeStore((state) => state.deleteRecipe);
-
+export const Header = ({ name, onExport, onEdit, onRemove, onBack }: Props) => {
   const scheme = useColorScheme();
   const colors =
     scheme === undefined || scheme === null ? Colors.light : Colors[scheme];
 
   return (
     <View style={styles.container}>
-      <Pressable onPress={onBack}>
-        <Image
-          style={styles.image}
-          source={require("@/assets/images/icons/back_arrow.svg")}
-          alt="Voltar"
-        />
-      </Pressable>
-      <ThemedText type="title">{recipe.name}</ThemedText>
+      <View style={{ ...styles.header, borderColor: colors.secondary }}>
+        {onBack && (
+          <Pressable onPress={onBack}>
+            <Image
+              style={{ width: 40, height: 40 }}
+              source={require("@/assets/images/icons/back_arrow.svg")}
+              alt="Voltar"
+            />
+          </Pressable>
+        )}
+        <ThemedText type="title">{name}</ThemedText>
+      </View>
       <View style={styles.buttons}>
-        <Pressable onPress={() => generateRecipePDF(recipe)}>
-          <Image
-            style={styles.image}
-            source={require("@/assets/images/icons/export.svg")}
-            alt="Exportar"
-          />
-        </Pressable>
-        <Pressable
-          style={{
-            ...styles.button,
-            backgroundColor: colors.warning,
-          }}
-          onPress={() => {
-            removeRecipe(recipe.id as string);
-            onBack();
-          }}
-        >
-          <Image
-            style={{ width: 16, height: 16 }}
-            source={require("@/assets/images/icons/trash.svg")}
-            alt="Deletar"
-          />
-        </Pressable>
+        {onEdit && (
+          <Pressable
+            style={{
+              ...styles.button,
+              backgroundColor: colors.blue,
+            }}
+            onPress={onEdit}
+          >
+            <Image
+              style={{ width: 24, height: 24 }}
+              source={require("@/assets/images/icons/edit.svg")}
+              alt="Editar"
+            />
+          </Pressable>
+        )}
+        {onRemove && (
+          <Pressable
+            style={{
+              ...styles.button,
+              backgroundColor: colors.warning,
+            }}
+            onPress={onRemove}
+          >
+            <Image
+              style={{ width: 24, height: 24 }}
+              source={require("@/assets/images/icons/trash.svg")}
+              alt="Deletar"
+            />
+          </Pressable>
+        )}
+        {onExport && (
+          <Pressable onPress={onExport}>
+            <Image
+              style={{ width: 40, height: 40 }}
+              source={require("@/assets/images/icons/export.svg")}
+              alt="Exportar"
+            />
+          </Pressable>
+        )}
       </View>
     </View>
   );
@@ -62,23 +79,29 @@ export const Header = ({ recipe, onBack }: Props) => {
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: 16,
+    gap: Spacing.two,
   },
-  image: {
-    width: 40,
-    height: 40,
+  header: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.three,
+    paddingBottom: Spacing.two,
+    borderBottomWidth: 1,
   },
   button: {
-    padding: 8,
-    borderRadius: 8,
+    width: 40,
+    height: 40,
+    padding: Spacing.two,
+    borderRadius: Spacing.two,
     alignItems: "center",
     justifyContent: "center",
   },
   buttons: {
-    gap: 8,
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    gap: Spacing.two,
     flexDirection: "row",
   },
 });

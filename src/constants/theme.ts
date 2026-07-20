@@ -22,6 +22,7 @@ export const Colors = {
     white: "#ffffff",
     success: "#16D76C",
     warning: "#D71616",
+    blue: "#16A3D7",
   },
   dark: {
     text: "#ffffff",
@@ -37,6 +38,7 @@ export const Colors = {
     white: "#ffffff",
     success: "#16D76C",
     warning: "#D71616",
+    blue: "#16A3D7",
   },
   background: "#F9F9F9",
 } as const;
@@ -45,26 +47,19 @@ export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
 
 export const Fonts = Platform.select({
   ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: "system-ui",
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: "ui-serif",
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: "ui-rounded",
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: "ui-monospace",
+    poppins_semibold: "Poppins_600SemiBold",
+    opensans_regular: "OpenSans_400Regular",
+    opensans_light: "OpenSans_300Light",
   },
   default: {
-    sans: "normal",
-    serif: "serif",
-    rounded: "normal",
-    mono: "monospace",
+    poppins_semibold: "Poppins_600SemiBold",
+    opensans_regular: "OpenSans_400Regular",
+    opensans_light: "OpenSans_300Light",
   },
   web: {
-    sans: "var(--font-display)",
-    serif: "var(--font-serif)",
-    rounded: "var(--font-rounded)",
-    mono: "var(--font-mono)",
+    poppins_semibold: "var(--font-poppins_semibold)",
+    opensans_regular: "var(--font-opensans_regular)",
+    opensans_light: "var(--font-opensans_light)",
   },
 });
 
