@@ -124,7 +124,6 @@ export function ImageInput({
 const styles = StyleSheet.create({
   container: {
     gap: Spacing.two,
-    padding: Spacing.two,
   },
   label_container: {
     flexDirection: "row",
@@ -153,6 +152,7 @@ const styles = StyleSheet.create({
   placeholder_container: {
     alignItems: "center",
     justifyContent: "center",
+    padding: Spacing.two,
   },
   button: {
     position: "absolute",

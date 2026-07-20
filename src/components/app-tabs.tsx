@@ -36,9 +36,9 @@ export default function AppTabs() {
           title: "Home",
           tabBarLabelStyle: {
             marginTop: 4,
-            height: 20,
             fontSize: 16,
             fontWeight: "regular",
+            height: 40,
           },
           tabBarIcon: ({ color }) => (
             <Image
@@ -55,8 +55,9 @@ export default function AppTabs() {
           title: "Nova Receita",
           tabBarLabelStyle: {
             marginTop: 4,
-            height: 20,
             fontSize: 16,
+            fontWeight: "regular",
+            height: 40,
           },
           tabBarIcon: ({ color }) => (
             <Image
