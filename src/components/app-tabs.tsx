@@ -20,7 +20,7 @@ export default function AppTabs() {
           borderColor: colors.secondary,
           justifyContent: "center",
           alignItems: "baseline",
-          height: 120,
+          height: 140,
           flexDirection: "row",
           paddingTop: 16,
         },
