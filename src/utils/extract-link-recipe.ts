@@ -31,6 +31,7 @@ export const processSharedLink = async (videoUrl: string) => {
       contents: prompt,
       config: {
         responseMimeType: "application/json",
+        tools: [{ googleSearch: {} }],
         responseSchema: {
           type: Type.OBJECT,
           properties: {
