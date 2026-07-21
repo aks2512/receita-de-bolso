@@ -1,5 +1,5 @@
 import { IRecipeForm } from "@/validations/recipe-schema";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 import * as SecureStore from "expo-secure-store";
 import { Alert } from "react-native";
 import { STORAGE_KEYS } from "./storage-keys";
@@ -17,15 +17,7 @@ export const processSharedLink = async (videoUrl: string) => {
       return undefined;
     }
 
-    const genAI = new GoogleGenerativeAI(savedKey);
-
-    const model = genAI.getGenerativeModel({
-      // Modelo válido com suporte a fileData/fileUri de vídeo do YouTube
-      model: "gemini-2.0-flash",
-      generationConfig: {
-        responseMimeType: "application/json",
-      },
-    });
+    const ai = new GoogleGenAI({ apiKey: savedKey });
 
     const prompt = `
       Atue como um extrator de receitas estruturadas.
@@ -52,19 +44,25 @@ export const processSharedLink = async (videoUrl: string) => {
       Se o vídeo não for de culinária, use o título do link para criar uma receita criativa plausível, garantindo que o JSON nunca venha vazio.
   `;
 
-    // A URL do vídeo agora é enviada como fileData, não embutida no texto do prompt.
-    // Isso é o que de fato permite ao modelo acessar o conteúdo do vídeo.
-    const response = await model.generateContent([
-      {
-        fileData: {
-          fileUri: cleanUrl,
-          mimeType: "video/*",
+    // A URL do vídeo é enviada como fileData, uma part separada do texto.
+    const response = await ai.models.generateContent({
+      model: "gemini-3.1-flash-lite",
+      contents: [
+        {
+          fileData: {
+            fileUri: cleanUrl,
+            mimeType: "video/*",
+          },
         },
+        { text: prompt },
+      ],
+      config: {
+        responseMimeType: "application/json",
       },
-      { text: prompt },
-    ]);
+    });
 
-    const responseText = response.response.text();
+    // No novo SDK, response.text já vem pronto (propriedade, não função)
+    const responseText = response.text;
 
     if (!responseText || responseText.trim() === "") {
       throw new Error("A IA retornou um texto completamente vazio.");

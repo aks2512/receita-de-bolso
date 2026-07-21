@@ -1,5 +1,5 @@
 import { IRecipeForm } from "@/validations/recipe-schema";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 import { File } from "expo-file-system";
 import * as SecureStore from "expo-secure-store";
 import { Alert } from "react-native";
@@ -32,7 +32,6 @@ export const processSharedImage = async (fileUri: string) => {
       return undefined;
     }
 
-    // Leitura correta do arquivo em base64 via API estável do expo-file-system
     const file = new File(fileUri);
     const base64Data = await file.base64();
 
@@ -40,15 +39,7 @@ export const processSharedImage = async (fileUri: string) => {
       throw new Error("Não foi possível ler os dados da imagem.");
     }
 
-    const genAI = new GoogleGenerativeAI(savedKey);
-
-    const model = genAI.getGenerativeModel({
-      // Modelo válido (o anterior "gemini-3.5-flash" não existe na API)
-      model: "gemini-2.0-flash",
-      generationConfig: {
-        responseMimeType: "application/json",
-      },
-    });
+    const ai = new GoogleGenAI({ apiKey: savedKey });
 
     const prompt = `
   Atue como um digitalizador estruturado de receitas.
@@ -80,9 +71,15 @@ export const processSharedImage = async (fileUri: string) => {
       },
     };
 
-    const response = await model.generateContent([prompt, fotoProntaParaIA]);
+    const response = await ai.models.generateContent({
+      model: "gemini-3.1-flash-lite",
+      contents: [{ text: prompt }, fotoProntaParaIA],
+      config: {
+        responseMimeType: "application/json",
+      },
+    });
 
-    const responseText = response?.response?.text?.();
+    const responseText = response.text;
 
     if (!responseText || responseText.trim() === "") {
       throw new Error("A IA retornou uma resposta vazia.");

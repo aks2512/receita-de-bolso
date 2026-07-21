@@ -44,6 +44,11 @@ export const RECIPE_CATEGORIES = [
     image: require("@/assets/images/icons/desserts.svg"),
     value: "desserts",
   },
+  {
+    text: "Bebidas",
+    image: require("@/assets/images/icons/drinks.svg"),
+    value: "drinks",
+  },
 ];
 
 export const RECIPE_CATEGORIES_OPTIONS = RECIPE_CATEGORIES.filter(
