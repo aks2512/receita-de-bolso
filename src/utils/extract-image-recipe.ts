@@ -1,6 +1,6 @@
 import { IRecipeForm } from "@/validations/recipe-schema";
 import { GoogleGenAI, Type } from "@google/genai";
-import { File } from "expo-file-system";
+import * as FileSystem from "expo-file-system"; // Ajustado para usar o FileSystem padrão
 import * as SecureStore from "expo-secure-store";
 import { Alert } from "react-native";
 import { STORAGE_KEYS } from "./storage-keys";
@@ -8,38 +8,41 @@ import { STORAGE_KEYS } from "./storage-keys";
 export const processSharedImage = async (fileUri: string) => {
   try {
     const savedKey = await SecureStore.getItemAsync(STORAGE_KEYS.gemini_key);
-    if (savedKey) {
-      const ai = new GoogleGenAI({
-        apiKey: savedKey,
-      });
 
-      const base64Data = await new File(fileUri).base64();
+    if (!savedKey) {
+      Alert.alert("Erro", "Não há API key salva!");
+      return undefined;
+    }
 
-      const prompt = `
-          Analise esta imagem. Extraia a receita culinária dela e formate EM PORTUGUÊS exatamente neste formato JSON:
-          {
-            "name": "Nome da receita",
-            "description": "Descrição",
-            "time": "20 min",
-            "ingredients": [{name: "Ingrediente 1", quantity: "200 gramas"}],
-            "steps": [{description: "Passo 1"}]
-          }
-        `;
+    const ai = new GoogleGenAI({
+      apiKey: savedKey,
+    });
 
-      const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: [
-          prompt,
-          {
-            inlineData: {
-              data: base64Data,
-              mimeType: "image/jpeg",
-            },
+    // CORREÇÃO: Método nativo e correto para obter o Base64 no Expo
+    const file = new FileSystem.File(fileUri);
+    const base64Data = await file.base64();
+
+    const prompt = `
+      Analise esta imagem. Extraia a receita culinária dela e formate EM PORTUGUÊS 
+      seguindo estritamente a estrutura de chaves definida no esquema JSON fornecido.
+    `;
+
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: [
+        prompt,
+        {
+          inlineData: {
+            data: base64Data,
+            mimeType: "image/jpeg",
           },
-        ],
-        config: {
-          responseMimeType: "application/json",
-          responseSchema: {
+        },
+      ],
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
             name: {
               type: Type.STRING,
               description: "Nome da receita (mínimo 3 caracteres)",
@@ -59,7 +62,11 @@ export const processSharedImage = async (fileUri: string) => {
                 type: Type.OBJECT,
                 properties: {
                   name: { type: Type.STRING },
-                  amount: { type: Type.STRING },
+                  amount: {
+                    type: Type.STRING,
+                    description:
+                      "Quantidade ou porção do ingrediente (ex: '200 gramas', '1 colher')",
+                  },
                 },
                 required: ["name", "amount"],
               },
@@ -77,20 +84,22 @@ export const processSharedImage = async (fileUri: string) => {
               description: "Lista com no mínimo 1 passo de instrução",
             },
           },
+          required: ["name", "ingredients", "steps"],
         },
-      });
+      },
+    });
 
-      const recipeData = JSON.parse(
-        response.text as string,
-      ) as Partial<IRecipeForm>;
-      console.log(recipeData);
-
-      return recipeData;
-    } else {
-      Alert.alert("Erro", "Não há API key salva!");
+    if (!response.text) {
+      throw new Error("A IA retornou uma resposta vazia.");
     }
+
+    const recipeData = JSON.parse(response.text) as Partial<IRecipeForm>;
+    console.log("Dados estruturados pela IA:", recipeData);
+
+    return recipeData;
   } catch (error) {
-    console.error(error);
+    console.error("Erro no processSharedImage:", error);
     Alert.alert("Erro", "Não foi possível extrair os dados da foto.");
+    return undefined;
   }
 };
