@@ -1,1 +1,4 @@
-export const STORAGE_KEYS = "APP_RECIPES";
+export const STORAGE_KEYS = {
+  recipes: "APP_RECIPES",
+  gemini_key: "APP_GEMINI_KEY",
+};

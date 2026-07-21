@@ -8,7 +8,8 @@ import { useColorScheme } from "react-native";
 
 import { AnimatedSplashOverlay } from "@/components/animated-icon";
 import { useUpdate } from "@/hooks/use-update";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
+import { useShareIntent } from "expo-share-intent";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
@@ -16,15 +17,18 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { Poppins_600SemiBold, useFonts } from "@expo-google-fonts/poppins";
 
-// 2. Importe os pesos da Open Sans
 import {
   OpenSans_300Light,
   OpenSans_400Regular,
 } from "@expo-google-fonts/open-sans";
+import { useEffect } from "react";
 
 SplashScreen.preventAutoHideAsync();
 
 const App = () => {
+  const router = useRouter();
+  const { hasShareIntent, shareIntent, resetShareIntent } = useShareIntent();
+
   const isLoading = useUpdate();
   const colorScheme = useColorScheme();
 
@@ -35,6 +39,18 @@ const App = () => {
   });
 
   if (!loaded && isLoading) return null;
+
+  useEffect(() => {
+    (async () => {
+      if (hasShareIntent && shareIntent.files) {
+        router.push({
+          pathname: "/new-recipe",
+          params: { type: "photo", content: shareIntent.files?.[0]?.path },
+        });
+        resetShareIntent();
+      }
+    })();
+  }, [hasShareIntent, shareIntent]);
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>

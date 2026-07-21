@@ -34,7 +34,19 @@
         }
       ],
       "expo-font",
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "expo-share-intent",
+        {
+          "ios": {
+            "title": "Compartilhar com Receita de Bolso"
+          },
+          "android": {
+            "type": "all"
+          }
+        }
+      ],
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true,

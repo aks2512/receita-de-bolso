@@ -28,7 +28,7 @@ import { Header } from "../header";
 
 type Props = {
   type?: "register" | "edit";
-  formData?: IRecipeForm;
+  formData?: Partial<IRecipeForm>;
 };
 
 export function RecipeForm({ type = "register", formData }: Props) {

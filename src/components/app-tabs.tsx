@@ -67,6 +67,25 @@ export default function AppTabs() {
           ),
         }}
       />
+
+      <Tabs.Screen
+        name="account"
+        options={{
+          title: "Conta",
+          tabBarLabelStyle: {
+            marginTop: 4,
+            fontSize: 16,
+            fontWeight: "regular",
+            height: 40,
+          },
+          tabBarIcon: ({ color }) => (
+            <Image
+              source={require("@/assets/images/tabIcons/account.svg")}
+              style={{ width: 40, height: 40, tintColor: color }}
+            />
+          ),
+        }}
+      />
     </Tabs>
   );
 }

@@ -10,14 +10,14 @@ import { RECIPE_CATEGORIES } from "@/constants/categories";
 import { Colors, MaxContentWidth, Spacing } from "@/constants/theme";
 import { useDebounce } from "@/hooks/use-debounce";
 import { useRecipeStore } from "@/stores/useRecipeStore";
-import { SearchForm, SearchSchema } from "@/validations/search-schema";
+import { ISearchForm, SearchSchema } from "@/validations/search-schema";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useShallow } from "zustand/react/shallow";
 
 export default function HomeScreen() {
-  const { control, watch } = useForm<SearchForm>({
+  const { control, watch } = useForm<ISearchForm>({
     mode: "onChange",
     resolver: yupResolver(SearchSchema),
     defaultValues: {

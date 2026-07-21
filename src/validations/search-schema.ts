@@ -4,4 +4,4 @@ export const SearchSchema = yup.object({
   search: yup.string().required("Campo obrigatório"),
 });
 
-export type SearchForm = yup.InferType<typeof SearchSchema>;
+export type ISearchForm = yup.InferType<typeof SearchSchema>;

@@ -1,3 +1,4 @@
+import { STORAGE_KEYS } from "@/utils/storage-keys";
 import { IRecipeForm } from "@/validations/recipe-schema";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
@@ -39,7 +40,7 @@ export const useRecipeStore = create<RecipeState>()(
         })),
     }),
     {
-      name: "APP_RECIPES",
+      name: STORAGE_KEYS.recipes,
       storage: createJSONStorage(() => AsyncStorage),
     },
   ),
