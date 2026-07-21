@@ -53,7 +53,7 @@ export default function RecipeScreen() {
                 <Ingredient
                   key={index}
                   name={ingredient.name}
-                  quantity={ingredient.quantity}
+                  amount={ingredient.amount}
                 />
               ))}
             </View>

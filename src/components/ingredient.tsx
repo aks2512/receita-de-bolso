@@ -5,17 +5,17 @@ import { ThemedText } from "./themed-text";
 
 type Props = {
   name: string;
-  quantity: string;
+  amount: string;
 };
 
-export const Ingredient = ({ name, quantity }: Props) => {
+export const Ingredient = ({ name, amount }: Props) => {
   const scheme = useColorScheme();
   const colors =
     scheme === undefined || scheme === null ? Colors.light : Colors[scheme];
   return (
     <View style={{ ...styles.container, borderColor: colors.secondary }}>
       <ThemedText themeColor="terciary">{name}</ThemedText>
-      <ThemedText themeColor="quinary">{quantity}</ThemedText>
+      <ThemedText themeColor="quinary">{amount}</ThemedText>
     </View>
   );
 };

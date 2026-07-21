@@ -12,6 +12,7 @@ import { IRecipeForm, RecipeSchema } from "@/validations/recipe-schema";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
+import { useEffect } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import {
   Alert,
@@ -47,23 +48,25 @@ export function RecipeForm({ type = "register", formData }: Props) {
   } = useForm({
     mode: "onChange",
     resolver: yupResolver(RecipeSchema),
-    defaultValues: formData
-      ? { id: formData.id as string, ...formData }
-      : {
-          id: undefined,
-          ingredients: [
-            {
-              name: "",
-              quantity: "",
-            },
-          ],
-          steps: [
-            {
-              description: "",
-            },
-          ],
+    defaultValues: {
+      id: undefined,
+      ingredients: [
+        {
+          name: "",
+          amount: "",
         },
+      ],
+      steps: [
+        {
+          description: "",
+        },
+      ],
+    },
   });
+
+  useEffect(() => {
+    reset(formData);
+  }, [formData]);
 
   const {
     fields: ingredientFields,
@@ -165,7 +168,7 @@ export function RecipeForm({ type = "register", formData }: Props) {
                       onPress={() =>
                         ingredientAppend({
                           name: "",
-                          quantity: "",
+                          amount: "",
                         })
                       }
                     >
@@ -204,7 +207,7 @@ export function RecipeForm({ type = "register", formData }: Props) {
                       />
                       <Input
                         control={control}
-                        name={`ingredients.${index}.quantity`}
+                        name={`ingredients.${index}.amount`}
                         placeholder="Digite o quantidade"
                       />
                     </View>

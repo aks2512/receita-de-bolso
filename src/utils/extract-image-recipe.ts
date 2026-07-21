@@ -20,32 +20,34 @@ export const processSharedImage = async (fileUri: string) => {
     const genAI = new GoogleGenerativeAI(savedKey);
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
+      model: "gemini-3.5-flash",
       generationConfig: {
         responseMimeType: "application/json",
       },
     });
 
     const prompt = `
-      Analise esta imagem. Extraia a receita culinária dela e formate EM PORTUGUÊS 
-      respondendo ESTRITAMENTE e EXATAMENTE no formato JSON estruturado abaixo. 
-      Não adicione saudações, explicações, comentários ou marcações extras antes ou depois:
+  Atue como um digitalizador estruturado de receitas.
+  Analise esta imagem, extraia os dados culinários em português e monte EXATAMENTE o objeto JSON abaixo.
+  Não adicione nenhuma palavra, comentário, explicação ou marcação markdown (\`\`\`json) antes ou depois do JSON:
 
-      {
-        "name": "Nome da receita (String com mínimo 3 caracteres)",
-        "description": "Descrição breve da receita (String com máximo 100 caracteres)",
-        "time": "Tempo de preparo formatado (ex: '30 min', '1 hora') (String)",
-        "ingredients": [
-          { 
-            "name": "Nome do ingrediente (String)", 
-            "amount": "Quantidade ou porção do ingrediente (ex: '200 gramas', '1 colher') (String)" 
-          }
-        ],
-        "steps": [
-          { "description": "Descrição detalhada do passo de instrução (String)" }
-        ]
+  {
+    "name": "Nome claro da receita",
+    "description": "Resumo em uma frase do prato (máximo 100 caracteres)",
+    "time": "Total de minutos apenas como número inteiro, sem letras ou textos (ex: se for 1 hora coloque 60, se for 30 minutos coloque 30)",
+    "ingredients": [
+      { 
+        "name": "Nome do ingrediente", 
+        "amount": "Apenas a quantidade e unidade (ex: '200g', '1 colher de sopa')" 
       }
-    `;
+    ],
+    "steps": [
+      { "description": "Texto descrevendo a instrução deste passo sequencial" }
+    ]
+  }
+
+  Se a imagem não contiver uma receita clara ou estiver borrada, use as palavras visíveis para gerar uma receita criativa plausível, garantindo que o JSON nunca venha vazio.
+`;
 
     const fotoProntaParaIA = {
       inlineData: {

@@ -3,7 +3,7 @@ import * as yup from "yup";
 
 const IngredientSchema = yup.object({
   name: yup.string().required("Campo obrigatório"),
-  quantity: yup.string().required("Campo obrigatório"),
+  amount: yup.string().required("Campo obrigatório"),
 });
 
 const StepSchema = yup.object({

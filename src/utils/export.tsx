@@ -91,7 +91,7 @@ export const generateRecipePDF = async (recipe: IRecipeForm) => {
             .ingredient-name {
               color: #333;
             }
-            .quantity { 
+            .amount { 
               color: #888; 
             }
             .steps-list {
@@ -143,7 +143,7 @@ export const generateRecipePDF = async (recipe: IRecipeForm) => {
                   (ing) => `
                 <li class="ingredient-item">
                   <span class="ingredient-name">${ing.name}</span>
-                  <span class="quantity">${ing.quantity}</span>
+                  <span class="amount">${ing.amount}</span>
                 </li>`,
                 )
                 .join("")}

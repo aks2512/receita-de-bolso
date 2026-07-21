@@ -54,7 +54,6 @@ const AppContent = () => {
         resetShareIntent();
       } else if (shareIntent.webUrl || shareIntent.text) {
         const linkFinal = shareIntent.webUrl || shareIntent.text;
-
         router.push({
           pathname: "/new-recipe",
           params: { type: "link", content: linkFinal },
