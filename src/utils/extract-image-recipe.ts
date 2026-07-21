@@ -1,9 +1,27 @@
 import { IRecipeForm } from "@/validations/recipe-schema";
-import { GoogleGenerativeAI } from "@google/generative-ai"; // Importação correta para Expo
-import * as FileSystem from "expo-file-system"; // Ajustado para os métodos nativos reais
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { File } from "expo-file-system";
 import * as SecureStore from "expo-secure-store";
 import { Alert } from "react-native";
 import { STORAGE_KEYS } from "./storage-keys";
+
+const getMimeType = (fileUri: string): string => {
+  const extension = fileUri.split(".").pop()?.toLowerCase();
+
+  switch (extension) {
+    case "png":
+      return "image/png";
+    case "webp":
+      return "image/webp";
+    case "heic":
+    case "heif":
+      return "image/heic";
+    case "jpg":
+    case "jpeg":
+    default:
+      return "image/jpeg";
+  }
+};
 
 export const processSharedImage = async (fileUri: string) => {
   try {
@@ -14,13 +32,19 @@ export const processSharedImage = async (fileUri: string) => {
       return undefined;
     }
 
-    const file = new FileSystem.File(fileUri);
+    // Leitura correta do arquivo em base64 via API estável do expo-file-system
+    const file = new File(fileUri);
     const base64Data = await file.base64();
+
+    if (!base64Data) {
+      throw new Error("Não foi possível ler os dados da imagem.");
+    }
 
     const genAI = new GoogleGenerativeAI(savedKey);
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-3.5-flash",
+      // Modelo válido (o anterior "gemini-3.5-flash" não existe na API)
+      model: "gemini-2.0-flash",
       generationConfig: {
         responseMimeType: "application/json",
       },
@@ -52,17 +76,17 @@ export const processSharedImage = async (fileUri: string) => {
     const fotoProntaParaIA = {
       inlineData: {
         data: base64Data,
-        mimeType: "image/jpeg",
+        mimeType: getMimeType(fileUri),
       },
     };
 
     const response = await model.generateContent([prompt, fotoProntaParaIA]);
 
-    if (!response || !response.response || !response.response.text) {
+    const responseText = response?.response?.text?.();
+
+    if (!responseText || responseText.trim() === "") {
       throw new Error("A IA retornou uma resposta vazia.");
     }
-
-    const responseText = response.response.text();
 
     const cleanJsonString = responseText.replace(/```json|```/g, "").trim();
 
@@ -72,7 +96,10 @@ export const processSharedImage = async (fileUri: string) => {
     return recipeData;
   } catch (error: any) {
     console.error("Erro no processSharedImage:", error?.message || error);
-    Alert.alert("Erro", "Não foi possível extrair os dados da foto.");
+    Alert.alert(
+      "Erro",
+      `Não foi possível extrair os dados da foto.\n${error?.message ?? ""}`,
+    );
     return undefined;
   }
 };

@@ -1,0 +1,3 @@
+"scripts": {
+  "postinstall": "patch-package"
+}

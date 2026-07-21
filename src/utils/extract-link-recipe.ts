@@ -20,8 +20,8 @@ export const processSharedLink = async (videoUrl: string) => {
     const genAI = new GoogleGenerativeAI(savedKey);
 
     const model = genAI.getGenerativeModel({
-      // CORREÇÃO 1: Nome do modelo corrigido para a versão estável com o prefixo nativo obrigatório
-      model: "gemini-3.5-flash",
+      // Modelo válido com suporte a fileData/fileUri de vídeo do YouTube
+      model: "gemini-2.0-flash",
       generationConfig: {
         responseMimeType: "application/json",
       },
@@ -29,7 +29,7 @@ export const processSharedLink = async (videoUrl: string) => {
 
     const prompt = `
       Atue como um extrator de receitas estruturadas.
-      Analise a transcrição, descrição e metadados deste vídeo do YouTube: ${cleanUrl}
+      Analise a transcrição, descrição e metadados deste vídeo do YouTube.
 
       Gere EXATAMENTE o objeto JSON abaixo em português. 
       Não adicione nenhuma palavra, comentário ou marcação markdown (\`\`\`json) antes ou depois do JSON:
@@ -52,12 +52,20 @@ export const processSharedLink = async (videoUrl: string) => {
       Se o vídeo não for de culinária, use o título do link para criar uma receita criativa plausível, garantindo que o JSON nunca venha vazio.
   `;
 
-    const response = await model.generateContent(prompt);
+    // A URL do vídeo agora é enviada como fileData, não embutida no texto do prompt.
+    // Isso é o que de fato permite ao modelo acessar o conteúdo do vídeo.
+    const response = await model.generateContent([
+      {
+        fileData: {
+          fileUri: cleanUrl,
+          mimeType: "video/*",
+        },
+      },
+      { text: prompt },
+    ]);
 
-    // CORREÇÃO 2: Adicionado o 'await' para garantir que o texto seja baixado por completo antes do Parse
-    const responseText = await response.response.text();
+    const responseText = response.response.text();
 
-    // Verificação preventiva de segurança para evitar quebras
     if (!responseText || responseText.trim() === "") {
       throw new Error("A IA retornou um texto completamente vazio.");
     }
@@ -73,7 +81,10 @@ export const processSharedLink = async (videoUrl: string) => {
       "Erro real na chamada nativa do Gemini:",
       error?.message || error,
     );
-    Alert.alert("Erro", "Não foi possível analisar o link enviado.");
+    Alert.alert(
+      "Erro",
+      `Não foi possível analisar o link enviado.\n${error?.message ?? ""}`,
+    );
     return undefined;
   }
 };

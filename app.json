@@ -38,14 +38,12 @@
       [
         "expo-share-intent",
         {
-          "ios": {
-            "title": "Compartilhar com Receita de Bolso"
+          "iosActivationRules": {
+            "NSExtensionActivationSupportsWebURLWithMaxCount": 1,
+            "NSExtensionActivationSupportsWebPageWithMaxCount": 1,
+            "NSExtensionActivationSupportsImageWithMaxCount": 1
           },
-          "android": {
-            "type": "all",
-            "package": "com.aks2512.receitadebolso",
-            "mimeType": "image/*"
-          }
+          "androidIntentFilters": ["text/*", "image/*"]
         }
       ],
       "expo-secure-store"
