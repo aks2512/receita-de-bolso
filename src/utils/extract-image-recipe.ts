@@ -18,9 +18,11 @@ export const processSharedImage = async (fileUri: string) => {
       const prompt = `
           Analise esta imagem. Extraia a receita culinária dela e formate EM PORTUGUÊS exatamente neste formato JSON:
           {
-            "titulo": "Nome da receita",
-            "ingredientes": "Ingrediente 1\nIngrediente 2\nIngrediente 3",
-            "modo_preparo": "Passo 1.\nPasso 2.\nPasso 3."
+            "name": "Nome da receita",
+            "description": "Descrição",
+            "time": "20 min",
+            "ingredients": [{name: "Ingrediente 1", quantity: "200 gramas"}],
+            "steps": [{description: "Passo 1"}]
           }
           Retorne as listas de ingredientes e modo de preparo separadas por quebras de linha (\\n) para facilitar o preenchimento de caixas de texto longas.
         `;
