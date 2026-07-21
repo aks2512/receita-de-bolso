@@ -83,7 +83,7 @@ export const processSharedLink = async (videoUrl: string) => {
     return recipeData;
   } catch (error) {
     console.error("Erro no processSharedLink:", error);
-    Alert.alert("Erro", "Não foi possível analisar o link enviado.");
+    Alert.alert("Erro", error as string);
     return undefined;
   }
 };
