@@ -24,7 +24,6 @@ export const processSharedImage = async (fileUri: string) => {
             "ingredients": [{name: "Ingrediente 1", quantity: "200 gramas"}],
             "steps": [{description: "Passo 1"}]
           }
-          Retorne as listas de ingredientes e modo de preparo separadas por quebras de linha (\\n) para facilitar o preenchimento de caixas de texto longas.
         `;
 
       const response = await ai.models.generateContent({
