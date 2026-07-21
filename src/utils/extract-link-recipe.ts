@@ -16,7 +16,7 @@ export const processSharedLink = async (videoUrl: string) => {
     const ai = new GoogleGenAI({ apiKey: savedKey });
 
     const prompt = `
-      Analise o conteúdo, metadados e transcrições publicamente disponíveis deste link de vídeo: ${videoUrl}.
+      Analise o conteúdo, metadados e transcrições publicamente disponíveis deste link de vídeo: https://www.youtube.com/shorts/eydMbeMvEe8.
       Extraia os dados culinários e preencha as chaves conforme as regras do sistema.
     `;
 
@@ -30,7 +30,7 @@ export const processSharedLink = async (videoUrl: string) => {
           Você deve responder EXATAMENTE no formato JSON abaixo, sem textos extras antes ou depois:
 
           {
-            "name": "Nome da receita extraída do vídeo (String)",
+            "name": "Nome da receita extraída do vídeo e entre parentes o link do video (String)",
             "description": "Resumo breve da receita descrita no vídeo (String)",
             "time": "Tempo estimado de preparo citado (ex: '45 min') (String)",
             "ingredients": [
