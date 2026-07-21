@@ -1,4 +1,4 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai"; // Importação correta para Expo
 import * as SecureStore from "expo-secure-store";
 import { Alert } from "react-native";
 import { STORAGE_KEYS } from "./storage-keys";
@@ -12,52 +12,49 @@ export const processSharedLink = async (videoUrl: string) => {
       return undefined;
     }
 
-    const ai = new GoogleGenAI({ apiKey: savedKey });
+    const genAI = new GoogleGenerativeAI(savedKey);
+
+    const model = genAI.getGenerativeModel({
+      model: "gemini-1.5-flash",
+      generationConfig: {
+        responseMimeType: "application/json",
+      },
+    });
 
     const prompt = `
-      Analise o conteúdo, metadados e transcrições publicamente disponíveis deste link de vídeo: https://www.youtube.com/shorts/eydMbeMvEe8.
-      Extraia os dados culinários e preencha as chaves conforme as regras do sistema.
+      Você é um assistente culinário avançado.
+      Analise o conteúdo, metadados e transcrições disponíveis deste link de vídeo do YouTube: ${videoUrl}.
+      
+      Extraia os dados culinários e preencha as chaves EXATAMENTE no formato JSON abaixo, sem blocos de texto decorativos ou comentários antes ou depois:
+
+      {
+        "name": "Nome da receita extraída do vídeo",
+        "description": "Resumo breve da receita",
+        "time": "Tempo estimado de preparo",
+        "ingredients": [
+          { "name": "Nome do ingrediente", "amount": "Quantidade" }
+        ],
+        "steps": [
+          { "description": "Descrição detalhada do passo" }
+        ]
+      }
     `;
 
-    // const response = await ai.models.generateContent({
-    //   model: "gemini-2.5-flash",
-    //   contents: prompt,
-    //   config: {
-    //     responseMimeType: "application/json",
-    //     systemInstruction: `
-    //       Você é um assistente culinário avançado. Sua única tarefa é ler o link recebido e estruturar uma receita.
-    //       Você deve responder EXATAMENTE no formato JSON abaixo, sem textos extras antes ou depois:
+    const response = await model.generateContent(prompt);
 
-    //       {
-    //         "name": "Nome da receita extraída do vídeo e entre parentes o link do video (String)",
-    //         "description": "Resumo breve da receita descrita no vídeo (String)",
-    //         "time": "Tempo estimado de preparo citado (ex: '45 min') (String)",
-    //         "ingredients": [
-    //           { "name": "Nome do ingrediente", "amount": "Quantidade" }
-    //         ],
-    //         "steps": [
-    //           { "description": "Descrição detalhada do passo a passo" }
-    //         ]
-    //       }
+    const responseText = response.response.text();
 
-    //       Se o vídeo não for de receita ou estiver bloqueado, invente uma receita criativa baseada nas palavras-chave do link para que o formulário nunca fique vazio.
-    //     `,
-    //   },
-    // });
+    const cleanJsonString = responseText.replace(/```json|```/g, "").trim();
 
-    // if (!response.text) {
-    //   throw new Error("Resposta vazia da IA.");
-    // }
+    const recipeData = JSON.parse(cleanJsonString);
+    console.log("Sucesso ao gerar dados:", recipeData);
 
-    // const cleanJsonString = response.text.replace(/```json|```/g, "").trim();
-
-    // const recipeData = JSON.parse(cleanJsonString) as Partial<IRecipeForm>;
-    // console.log("Receita extraída com sucesso do link:", recipeData);
-
-    // return recipeData;
-    return undefined;
-  } catch (error) {
-    console.error("Erro detalhado no processSharedLink:", error);
+    return recipeData;
+  } catch (error: any) {
+    console.error(
+      "Erro real na chamada nativa do Gemini:",
+      error?.message || error,
+    );
     Alert.alert("Erro", "Não foi possível analisar o link enviado.");
     return undefined;
   }
