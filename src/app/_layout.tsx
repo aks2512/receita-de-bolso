@@ -45,18 +45,22 @@ const AppContent = () => {
   }, [loaded, isLoading]);
 
   useEffect(() => {
-    if (hasShareIntent && shareIntent?.files && shareIntent.files.length > 0) {
-      router.push({
-        pathname: "/new-recipe",
-        params: { type: "photo", content: shareIntent.files[0]?.path },
-      });
-      resetShareIntent();
-    } else if (hasShareIntent && shareIntent?.webUrl) {
-      router.push({
-        pathname: "/new-recipe",
-        params: { type: "link", content: shareIntent.webUrl },
-      });
-      resetShareIntent();
+    if (hasShareIntent && shareIntent) {
+      if (shareIntent.files && shareIntent.files?.[0].path) {
+        router.push({
+          pathname: "/new-recipe",
+          params: { type: "photo", content: shareIntent.files?.[0].path },
+        });
+        resetShareIntent();
+      } else if (shareIntent.webUrl || shareIntent.text) {
+        const linkFinal = shareIntent.webUrl || shareIntent.text;
+
+        router.push({
+          pathname: "/new-recipe",
+          params: { type: "link", content: linkFinal },
+        });
+        resetShareIntent();
+      }
     }
   }, [hasShareIntent, shareIntent]);
 
