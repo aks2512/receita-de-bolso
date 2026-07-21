@@ -9,7 +9,7 @@ import { useColorScheme } from "react-native";
 import { AnimatedSplashOverlay } from "@/components/animated-icon";
 import { useUpdate } from "@/hooks/use-update";
 import { Stack, useRouter } from "expo-router";
-import { useShareIntent } from "expo-share-intent";
+import { ShareIntentProvider, useShareIntent } from "expo-share-intent";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
@@ -25,7 +25,7 @@ import { useEffect } from "react";
 
 SplashScreen.preventAutoHideAsync();
 
-const App = () => {
+const AppContent = () => {
   const router = useRouter();
   const { hasShareIntent, shareIntent, resetShareIntent } = useShareIntent();
 
@@ -38,23 +38,26 @@ const App = () => {
     OpenSans_300Light,
   });
 
-  if (!loaded && isLoading) return null;
+  useEffect(() => {
+    if (loaded && !isLoading) {
+      SplashScreen.hideAsync().catch(() => {});
+    }
+  }, [loaded, isLoading]);
 
   useEffect(() => {
-    (async () => {
-      if (hasShareIntent && shareIntent.files) {
-        router.push({
-          pathname: "/new-recipe",
-          params: { type: "photo", content: shareIntent.files?.[0]?.path },
-        });
-        resetShareIntent();
-      }
-    })();
+    if (hasShareIntent && shareIntent?.files && shareIntent.files.length > 0) {
+      router.push({
+        pathname: "/new-recipe",
+        params: { type: "photo", content: shareIntent.files[0]?.path },
+      });
+      resetShareIntent();
+    }
   }, [hasShareIntent, shareIntent]);
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <AnimatedSplashOverlay />
+      {(!loaded || isLoading) && <AnimatedSplashOverlay />}
+
       <GestureHandlerRootView style={{ flex: 1 }}>
         <KeyboardProvider>
           <SafeAreaProvider>
@@ -76,4 +79,10 @@ const App = () => {
   );
 };
 
-export default App;
+export default function App() {
+  return (
+    <ShareIntentProvider>
+      <AppContent />
+    </ShareIntentProvider>
+  );
+}
