@@ -42,7 +42,9 @@
             "title": "Compartilhar com Receita de Bolso"
           },
           "android": {
-            "type": "all"
+            "type": "all",
+            "package": "com.aks2512.receitadebolso",
+            "mimeType": "image/*"
           }
         }
       ],
