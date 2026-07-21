@@ -51,6 +51,12 @@ const AppContent = () => {
         params: { type: "photo", content: shareIntent.files[0]?.path },
       });
       resetShareIntent();
+    } else if (hasShareIntent && shareIntent?.webUrl) {
+      router.push({
+        pathname: "/new-recipe",
+        params: { type: "link", content: shareIntent.webUrl },
+      });
+      resetShareIntent();
     }
   }, [hasShareIntent, shareIntent]);
 
