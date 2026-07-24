@@ -52,7 +52,7 @@ export function ConfigForm({ type = "register", formData }: Props) {
         );
         Alert.alert("Sucesso", "API key editada com sucesso!");
       }
-    } catch (error) {
+    } catch {
       Alert.alert("Erro", "Não foi possível salvar a API key");
     }
   };

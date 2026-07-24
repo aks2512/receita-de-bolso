@@ -91,14 +91,7 @@ const logoKeyframe = new Keyframe({
   },
 });
 
-const glowKeyframe = new Keyframe({
-  0: {
-    transform: [{ rotateZ: "0deg" }],
-  },
-  100: {
-    transform: [{ rotateZ: "7200deg" }],
-  },
-});
+// glowKeyframe removed (unused) to satisfy lint rules
 
 export function AnimatedIcon() {
   return (

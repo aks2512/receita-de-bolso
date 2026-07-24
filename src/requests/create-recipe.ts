@@ -10,7 +10,7 @@ export function useCreateRecipe(props?: MutationProps) {
     mutationKey: ["create-recipe"],
     mutationFn: async (form: IRecipeForm) => {
       try {
-        const data = await db.insert(recipeTable).values({
+        await db.insert(recipeTable).values({
           id: Crypto.randomUUID(),
           filePath: form.image,
           name: form.name,

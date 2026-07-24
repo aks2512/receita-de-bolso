@@ -40,20 +40,7 @@ const logoKeyframe = new Keyframe({
   },
 });
 
-const glowKeyframe = new Keyframe({
-  0: {
-    transform: [{ rotateZ: "-180deg" }, { scale: 0.8 }],
-    opacity: 0,
-  },
-  [DURATION / 1000]: {
-    transform: [{ rotateZ: "0deg" }, { scale: 1 }],
-    opacity: 1,
-    easing: Easing.elastic(0.7),
-  },
-  100: {
-    transform: [{ rotateZ: "7200deg" }],
-  },
-});
+// glowKeyframe removed (unused) to satisfy lint rules
 
 export function AnimatedIcon() {
   return (
