@@ -29,7 +29,11 @@ export const Header = ({ name, onExport, onEdit, onRemove, onBack }: Props) => {
         }}
       >
         {onBack && (
-          <Pressable onPress={onBack} accessibilityLabel="Voltar" accessibilityRole="button">
+          <Pressable
+            onPress={onBack}
+            accessibilityLabel="Voltar"
+            accessibilityRole="button"
+          >
             <Image
               style={{ width: 40, height: 40, tintColor: colors.terciary }}
               source={require("@/assets/images/icons/back_arrow.svg")}

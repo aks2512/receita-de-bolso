@@ -36,6 +36,8 @@ export function ThemedButton({
         },
         typeof style === "function" ? style(state) : style,
       ]}
+      accessibilityRole="button"
+      accessibilityLabel={children}
       {...rest}
     >
       <ThemedText style={[{ color: "#ffffff" }, styles[type]]}>
