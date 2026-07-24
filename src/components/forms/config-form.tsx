@@ -8,6 +8,7 @@ import { useThemeColors } from "@/hooks/use-theme-colors";
 import { translations } from "@/i18n/translations";
 import { useTranslation } from "@/i18n/useTranslation";
 import { useConfigStore } from "@/stores/useConfigStore";
+import { Option } from "@/types/option";
 import { STORAGE_KEYS } from "@/utils/storage-keys";
 import { ConfigSchema, IConfigForm } from "@/validations/config-schema";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -74,7 +75,9 @@ export function ConfigForm({ type = "register", formData }: Props) {
         font_size: values.font_size || 100,
         letter_case: values.letter_case || "capitalize",
         font_weight: values.font_weight || "default",
-        language: values.language || "pt",
+        language:
+          (values.language as Option | undefined) ||
+          (languageOptions[0] as Option),
       });
     });
     return () => subscription.unsubscribe();
@@ -106,9 +109,9 @@ export function ConfigForm({ type = "register", formData }: Props) {
                   name="font_size"
                   control={control}
                   label={t("font_size")}
-                  minimumValue={80}
+                  minimumValue={50}
                   maximumValue={150}
-                  step={1}
+                  step={10}
                   unit="%"
                 />
                 <LetterCaseSelector

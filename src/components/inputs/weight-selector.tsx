@@ -45,7 +45,7 @@ export function WeightSelector({ name, label, control, description }: Props) {
                     styles.scroll_content,
                     {
                       backgroundColor:
-                        field.value === item
+                        field.value === item.toLowerCase()
                           ? colors.primary
                           : colors.background,
                       borderColor: colors.quinary,
@@ -55,7 +55,9 @@ export function WeightSelector({ name, label, control, description }: Props) {
                   <Pressable onPress={() => field.onChange(item.toLowerCase())}>
                     <ThemedText
                       style={{ textAlign: "center" }}
-                      themeColor={field.value === item ? "white" : "quinary"}
+                      themeColor={
+                        field.value === item.toLowerCase() ? "white" : "quinary"
+                      }
                     >
                       {item}
                     </ThemedText>

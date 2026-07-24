@@ -50,7 +50,7 @@ export function LetterCaseSelector({
                     styles.scroll_content,
                     {
                       backgroundColor:
-                        field.value === item
+                        field.value === item.toLowerCase()
                           ? colors.primary
                           : colors.background,
                       borderColor: colors.quinary,
@@ -64,8 +64,10 @@ export function LetterCaseSelector({
                         fontSize: 24,
                         fontWeight: 600,
                         color:
-                          field.value === item ? colors.white : colors.quinary,
-                        textTransform: item as
+                          field.value === item.toLowerCase()
+                            ? colors.white
+                            : colors.quinary,
+                        textTransform: item.toLowerCase() as
                           | "none"
                           | "lowercase"
                           | "capitalize"
@@ -76,7 +78,9 @@ export function LetterCaseSelector({
                     </Text>
                     <ThemedText
                       style={{ textAlign: "center" }}
-                      themeColor={field.value === item ? "white" : "quinary"}
+                      themeColor={
+                        field.value === item.toLowerCase() ? "white" : "quinary"
+                      }
                     >
                       {item}
                     </ThemedText>

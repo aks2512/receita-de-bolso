@@ -42,24 +42,29 @@ export default function Select({
             )}
           </ThemedView>
           <Dropdown
-            style={{
-              ...styles.dropdown,
-              borderColor: colors.quaternary,
-              backgroundColor: colors.background,
-            }}
-            placeholderStyle={{
-              ...styles.placeholder_text,
-              color: colors.quinary,
-            }}
-            selectedTextStyle={{
-              ...styles.selected_text,
-              color: colors.terciary,
-            }}
+            style={[
+              styles.dropdown,
+              {
+                borderColor: colors.quaternary,
+                backgroundColor: colors.background,
+              },
+            ]}
+            placeholderStyle={[
+              styles.placeholder_text,
+              { color: colors.quinary },
+            ]}
+            selectedTextStyle={[
+              styles.selected_text,
+              { color: colors.terciary },
+            ]}
             iconColor={colors.terciary}
-            itemContainerStyle={styles.item}
-            itemTextStyle={{ ...styles.item_text, color: colors.terciary }}
-            inputSearchStyle={styles.input_search}
-            containerStyle={{ ...styles.menu, borderColor: colors.quaternary }}
+            containerStyle={[
+              styles.menu,
+              {
+                borderColor: colors.quaternary,
+                backgroundColor: colors.background,
+              },
+            ]}
             data={options}
             maxHeight={300}
             labelField="label"
@@ -67,6 +72,34 @@ export default function Select({
             placeholder={placeholder}
             value={field.value}
             onChange={field.onChange}
+            renderItem={(item) => {
+              const isSelected = item.value === field.value;
+
+              return (
+                <ThemedView
+                  style={[
+                    styles.item,
+                    {
+                      backgroundColor: isSelected
+                        ? colors.secondary
+                        : colors.background,
+                    },
+                  ]}
+                >
+                  <ThemedText
+                    style={[
+                      styles.item_text,
+                      {
+                        color: colors.terciary,
+                        fontWeight: isSelected ? "600" : "300",
+                      },
+                    ]}
+                  >
+                    {item.label}
+                  </ThemedText>
+                </ThemedView>
+              );
+            }}
           />
           {error?.message && (
             <ThemedText type="small" themeColor="warning">

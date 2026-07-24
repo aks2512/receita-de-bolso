@@ -1,6 +1,6 @@
 export type Locale = "pt" | "en";
 
-export const translations: Record<Locale, Record<string, string>> = {
+export const translations = {
   pt: {
     home: "Home",
     configuration: "Configuração",
@@ -147,4 +147,6 @@ export const translations: Record<Locale, Record<string, string>> = {
     search: "Search",
     app_name: "Pocket Recipe",
   },
-};
+} as const;
+
+export type TranslationKeys = keyof typeof translations.pt;
