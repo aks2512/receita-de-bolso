@@ -1,9 +1,10 @@
 import { Image } from "expo-image";
 import * as SplashScreen from "expo-splash-screen";
 import { useState } from "react";
-import { Dimensions, StyleSheet, View } from "react-native";
+import { Dimensions, StyleSheet } from "react-native";
 import Animated, { Easing, Keyframe } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
+import { ThemedView } from "./themed-view";
 
 const INITIAL_SCALE_FACTOR = Dimensions.get("screen").height / 90;
 const DURATION = 600;
@@ -34,7 +35,7 @@ export function AnimatedSplashOverlay() {
   });
 
   const image = (
-    <Image style={styles.image} source={require("@/assets/images/icon.png")} />
+    <Image style={styles.image} source={require("@/assets/images/icon.jpg")} />
   );
 
   return animate ? (
@@ -50,7 +51,7 @@ export function AnimatedSplashOverlay() {
       {image}
     </Animated.View>
   ) : (
-    <View
+    <ThemedView
       onLayout={() => {
         SplashScreen.hideAsync().finally(() => {
           setAnimate(true);
@@ -59,7 +60,7 @@ export function AnimatedSplashOverlay() {
       style={styles.splashOverlay}
     >
       {image}
-    </View>
+    </ThemedView>
   );
 }
 
@@ -101,7 +102,7 @@ const glowKeyframe = new Keyframe({
 
 export function AnimatedIcon() {
   return (
-    <View style={styles.iconContainer}>
+    <ThemedView style={styles.iconContainer}>
       <Animated.View
         entering={keyframe.duration(DURATION)}
         style={styles.background}
@@ -112,10 +113,10 @@ export function AnimatedIcon() {
       >
         <Image
           style={styles.image}
-          source={require("@/assets/images/icon.png")}
+          source={require("@/assets/images/icon.jpg")}
         />
       </Animated.View>
-    </View>
+    </ThemedView>
   );
 }
 

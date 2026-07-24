@@ -1,4 +1,4 @@
 export const STORAGE_KEYS = {
-  recipes: "APP_RECIPES",
-  gemini_key: "APP_GEMINI_KEY",
+  gemini_key: "RECEITA_DE_BOLSO__GEMINI_KEY",
+  config: "RECEITA_DE_BOLSO__CONFIG",
 };

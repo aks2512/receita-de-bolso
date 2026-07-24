@@ -1,5 +1,6 @@
 import React from "react";
-import { ActivityIndicator, Modal, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Modal, StyleSheet, Text } from "react-native";
+import { ThemedView } from "./themed-view";
 
 interface LoadingOverlayProps {
   visible: boolean;
@@ -12,13 +13,13 @@ export function LoadingOverlay({
 }: LoadingOverlayProps) {
   return (
     <Modal transparent animationType="fade" visible={visible}>
-      <View style={styles.overlayContainer}>
-        <View style={styles.alertBox}>
+      <ThemedView style={styles.overlayContainer}>
+        <ThemedView style={styles.alertBox}>
           <ActivityIndicator size="large" color="#FFA807" />
           <Text style={styles.alertText}>{message}</Text>
           <Text style={styles.subText}>Isso pode levar alguns segundos.</Text>
-        </View>
-      </View>
+        </ThemedView>
+      </ThemedView>
     </Modal>
   );
 }

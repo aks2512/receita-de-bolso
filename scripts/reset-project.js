@@ -20,9 +20,9 @@ const indexContent = `import { Text, View, StyleSheet } from "react-native";
 
 export default function Index() {
   return (
-    <View style={styles.container}>
+    <ThemedView style={styles.container}>
       <Text>Edit src/app/index.tsx to edit this screen.</Text>
-    </View>
+    </ThemedView>
   );
 }
 
@@ -93,7 +93,7 @@ const moveDirectories = async (userInput) => {
         userInput === "y"
           ? `\n4. Delete the /${exampleDir} directory when you're done referencing it.`
           : ""
-      }`
+      }`,
     );
   } catch (error) {
     console.error(`❌ Error during script execution: ${error.message}`);
@@ -110,5 +110,5 @@ rl.question(
       console.log("❌ Invalid input. Please enter 'Y' or 'N'.");
       rl.close();
     }
-  }
+  },
 );

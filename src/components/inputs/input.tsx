@@ -1,8 +1,10 @@
-import { Colors, Spacing } from "@/constants/theme";
-import React, { ComponentProps } from "react";
+import { Spacing } from "@/constants/theme";
+import { useThemeColors } from "@/hooks/use-theme-colors";
+import React, { ComponentProps, useState } from "react";
 import { Controller } from "react-hook-form";
-import { StyleSheet, TextInput, useColorScheme, View } from "react-native";
+import { StyleSheet, TextInput } from "react-native";
 import { ThemedText } from "../themed-text";
+import { ThemedView } from "../themed-view";
 
 type Props = Omit<ComponentProps<typeof TextInput>, "style"> & {
   control: any;
@@ -20,27 +22,45 @@ export const Input = ({
   maskFunction,
   ...rest
 }: Props) => {
-  const scheme = useColorScheme();
-  const colors =
-    scheme === undefined || scheme === null ? Colors.light : Colors[scheme];
+  const colors = useThemeColors();
+  const [inputHeight, setInputHeight] = useState(51);
 
   return (
     <Controller
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => (
-        <View style={styles.container}>
-          <View style={styles.label_container}>
-            {label && <ThemedText themeColor="terciary">{label}</ThemedText>}
-            {description && (
-              <ThemedText type="small" themeColor="quaternary">
-                {description}
-              </ThemedText>
-            )}
-          </View>
+        <ThemedView
+          style={[styles.container, { backgroundColor: colors.background }]}
+        >
+          {label && (
+            <ThemedView
+              style={[
+                styles.label_container,
+                { width: "100%", backgroundColor: colors.background },
+              ]}
+            >
+              {label && <ThemedText themeColor="terciary">{label}</ThemedText>}
+              {description && (
+                <ThemedText type="small" themeColor="quaternary">
+                  {description}
+                </ThemedText>
+              )}
+            </ThemedView>
+          )}
           <TextInput
+            multiline
             placeholderTextColor={colors.quinary}
-            style={{ ...styles.input, borderColor: colors.quaternary }}
+            onContentSizeChange={(event) => {
+              setInputHeight(event.nativeEvent.contentSize.height);
+            }}
+            style={{
+              ...styles.input,
+              color: colors.quinary,
+              borderColor: colors.quaternary,
+              height: Math.max(51, inputHeight),
+              backgroundColor: colors.background,
+            }}
             onChangeText={(e) =>
               field.onChange(maskFunction ? maskFunction(e) : e)
             }
@@ -52,7 +72,7 @@ export const Input = ({
               {error.message}
             </ThemedText>
           )}
-        </View>
+        </ThemedView>
       )}
     />
   );
@@ -65,9 +85,10 @@ const styles = StyleSheet.create({
     gap: Spacing.two,
   },
   label_container: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.two,
+    width: "100%",
+    flexDirection: "column",
+    alignItems: "flex-start",
+    gap: 2,
   },
   input: {
     width: "100%",
@@ -75,6 +96,5 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.three,
     paddingHorizontal: Spacing.two,
     borderRadius: Spacing.two,
-    backgroundColor: "#ffffff",
   },
 });

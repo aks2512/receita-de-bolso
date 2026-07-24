@@ -1,10 +1,12 @@
-import { Colors, Spacing } from "@/constants/theme";
+import { Spacing } from "@/constants/theme";
+import { useThemeColors } from "@/hooks/use-theme-colors";
 import { Option } from "@/types/option";
 import React from "react";
 import { Controller } from "react-hook-form";
-import { StyleSheet, useColorScheme, View } from "react-native";
+import { StyleSheet } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { ThemedText } from "../themed-text";
+import { ThemedView } from "../themed-view";
 
 type Props = {
   control: any;
@@ -23,26 +25,28 @@ export default function Select({
   options,
   placeholder,
 }: Props) {
-  const scheme = useColorScheme();
-  const colors =
-    scheme === undefined || scheme === null ? Colors.light : Colors[scheme];
+  const colors = useThemeColors();
 
   return (
     <Controller
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => (
-        <View style={styles.container}>
-          <View style={styles.label_container}>
+        <ThemedView style={styles.container}>
+          <ThemedView style={styles.label_container}>
             {label && <ThemedText themeColor="terciary">{label}</ThemedText>}
             {description && (
               <ThemedText type="small" themeColor="quaternary">
                 {description}
               </ThemedText>
             )}
-          </View>
+          </ThemedView>
           <Dropdown
-            style={{ ...styles.dropdown, borderColor: colors.quaternary }}
+            style={{
+              ...styles.dropdown,
+              borderColor: colors.quaternary,
+              backgroundColor: colors.background,
+            }}
             placeholderStyle={{
               ...styles.placeholder_text,
               color: colors.quinary,
@@ -69,7 +73,7 @@ export default function Select({
               {error.message}
             </ThemedText>
           )}
-        </View>
+        </ThemedView>
       )}
     />
   );
@@ -91,7 +95,6 @@ const styles = StyleSheet.create({
     borderRadius: Spacing.two,
     paddingHorizontal: Spacing.two,
     paddingVertical: Spacing.three,
-    backgroundColor: "#ffffff",
   },
   menu: {
     borderWidth: 1,

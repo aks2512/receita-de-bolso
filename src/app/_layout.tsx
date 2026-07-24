@@ -1,8 +1,4 @@
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
+import { ThemeProvider } from "@react-navigation/native";
 import * as SplashScreen from "expo-splash-screen";
 import { useColorScheme } from "react-native";
 
@@ -17,20 +13,36 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { Poppins_600SemiBold, useFonts } from "@expo-google-fonts/poppins";
 
+import { ThemedText } from "@/components/themed-text";
+import {
+  CustomDarkTheme,
+  CustomLightTheme,
+} from "@/constants/navigation-theme";
+import { useConfigStore } from "@/stores/useConfigStore";
 import {
   OpenSans_300Light,
   OpenSans_400Regular,
 } from "@expo-google-fonts/open-sans";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
+import { SQLiteProvider } from "expo-sqlite";
 import { useEffect } from "react";
+import { DATABASE_NAME, db } from "../../db/client";
+import migrations from "../../drizzle/migrations";
 
 SplashScreen.preventAutoHideAsync();
 
+const queryClient = new QueryClient();
+
 const AppContent = () => {
   const router = useRouter();
+  const { success, error } = useMigrations(db, migrations as any);
   const { hasShareIntent, shareIntent, resetShareIntent } = useShareIntent();
 
   const isLoading = useUpdate();
-  const colorScheme = useColorScheme();
+  const config = useConfigStore((state) => state.config);
+  const systemColorScheme = useColorScheme();
+  const colorScheme = config.theme ? config.theme : systemColorScheme;
 
   const [loaded] = useFonts({
     Poppins_600SemiBold,
@@ -64,26 +76,35 @@ const AppContent = () => {
   }, [hasShareIntent, shareIntent]);
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      {(!loaded || isLoading) && <AnimatedSplashOverlay />}
-
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <KeyboardProvider>
-          <SafeAreaProvider>
-            <StatusBar />
-            <Stack
-              screenOptions={{
-                animation: "fade",
-                headerShown: false,
-                gestureEnabled: false,
-                contentStyle: {
-                  backgroundColor: "#F9F9F9",
-                },
-              }}
-            />
-          </SafeAreaProvider>
-        </KeyboardProvider>
-      </GestureHandlerRootView>
+    <ThemeProvider
+      value={colorScheme === "dark" ? CustomDarkTheme : CustomLightTheme}
+    >
+      {(!loaded || isLoading || !success) && <AnimatedSplashOverlay />}
+      {error ? (
+        <ThemedText>Erro na migration: {error?.message}</ThemedText>
+      ) : (
+        <SQLiteProvider databaseName={DATABASE_NAME} useSuspense>
+          <QueryClientProvider client={queryClient}>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+              <KeyboardProvider>
+                <SafeAreaProvider>
+                  <StatusBar />
+                  <Stack
+                    screenOptions={{
+                      animation: "fade",
+                      headerShown: false,
+                      gestureEnabled: false,
+                      contentStyle: {
+                        backgroundColor: "#F9F9F9",
+                      },
+                    }}
+                  />
+                </SafeAreaProvider>
+              </KeyboardProvider>
+            </GestureHandlerRootView>
+          </QueryClientProvider>
+        </SQLiteProvider>
+      )}
     </ThemeProvider>
   );
 };

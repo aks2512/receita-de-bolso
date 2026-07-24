@@ -4,11 +4,11 @@
     "slug": "receita-de-bolso",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/icon.jpg",
     "scheme": "receitadebolso",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/images/icon.png"
+      "icon": "./assets/images/icon.jpg"
     },
     "android": {
       "adaptiveIcon": {
@@ -25,12 +25,19 @@
       "output": "static"
     },
     "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "O app precisa acessar sua câmera para tirar foto.",
+          "photoPermission": "O app precisa acessar suas fotos para escolher uma imagem."
+        }
+      ],
       "expo-router",
       [
         "expo-splash-screen",
         {
           "backgroundColor": "#EFF1ED",
-          "image": "./assets/images/icon.png"
+          "image": "./assets/images/icon.jpg"
         }
       ],
       "expo-font",
@@ -43,10 +50,12 @@
             "NSExtensionActivationSupportsWebPageWithMaxCount": 1,
             "NSExtensionActivationSupportsImageWithMaxCount": 1
           },
-          "androidIntentFilters": ["text/*", "image/*"]
+          "androidIntentFilters": ["text/*", "image/*"],
+          "iosShareExtensionName": "Salvar Receita"
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-sqlite"
     ],
     "experiments": {
       "typedRoutes": true,

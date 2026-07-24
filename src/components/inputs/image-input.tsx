@@ -1,45 +1,32 @@
-import { Colors, Spacing } from "@/constants/theme";
+import { Spacing } from "@/constants/theme";
+import { useThemeColors } from "@/hooks/use-theme-colors";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import { Controller } from "react-hook-form";
-import {
-  Alert,
-  Pressable,
-  StyleSheet,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Alert, Pressable, StyleSheet } from "react-native";
 import { ThemedText } from "../themed-text";
+import { ThemedView } from "../themed-view";
 
 type Props = {
   name: string;
   label?: string;
   description?: string;
   control: any;
-  error?: string;
 };
 
-export function ImageInput({
-  name,
-  label,
-  control,
-  description,
-  error,
-}: Props) {
-  const scheme = useColorScheme();
-  const colors =
-    scheme === undefined || scheme === null ? Colors.light : Colors[scheme];
+export function ImageInput({ name, label, control, description }: Props) {
+  const colors = useThemeColors();
 
-  const pickImage = async () => {
+  const pickFromLibrary = async (): Promise<string | null> => {
     const permissionResult =
       await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-    if (permissionResult.granted === false) {
+    if (!permissionResult.granted) {
       Alert.alert(
         "Permissão necessária",
         "Você precisa permitir o acesso à galeria para escolher uma foto.",
       );
-      return;
+      return null;
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -50,34 +37,79 @@ export function ImageInput({
     });
 
     if (!result.canceled && result.assets && result.assets.length > 0) {
-      const firstAsset = { ...result.assets[0] };
-      const selectedUri = firstAsset.uri;
-      return selectedUri;
+      return result.assets[0].uri;
     }
     return null;
+  };
+
+  const pickFromCamera = async (): Promise<string | null> => {
+    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+
+    if (!permissionResult.granted) {
+      Alert.alert(
+        "Permissão necessária",
+        "Você precisa permitir o acesso à câmera para tirar uma foto.",
+      );
+      return null;
+    }
+
+    const result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [388, 210],
+      quality: 0.8,
+    });
+
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      return result.assets[0].uri;
+    }
+    return null;
+  };
+
+  const pickImage = (onChange: (uri: string | null) => void) => {
+    Alert.alert("Adicionar imagem", "De onde você quer pegar a foto?", [
+      {
+        text: "Câmera",
+        onPress: async () => onChange(await pickFromCamera()),
+      },
+      {
+        text: "Galeria",
+        onPress: async () => onChange(await pickFromLibrary()),
+      },
+      { text: "Cancelar", style: "cancel" },
+    ]);
   };
 
   return (
     <Controller
       name={name}
       control={control}
-      render={({ field }) => {
+      render={({ field, fieldState: { error } }) => {
         return (
-          <View style={styles.container}>
-            <View style={styles.label_container}>
+          <ThemedView
+            style={[styles.container, { backgroundColor: colors.background }]}
+          >
+            <ThemedView
+              style={[
+                styles.label_container,
+                { backgroundColor: colors.background },
+              ]}
+            >
               {label && <ThemedText themeColor="terciary">{label}</ThemedText>}
               {description && (
                 <ThemedText type="small" themeColor="quaternary">
                   {description}
                 </ThemedText>
               )}
-            </View>
+            </ThemedView>
             <Pressable
-              style={{ ...styles.image_box, backgroundColor: colors.secondary }}
-              onPress={async () => field.onChange(await pickImage())}
+              style={{
+                ...styles.image_box,
+                backgroundColor: colors.secondary,
+              }}
+              onPress={() => pickImage(field.onChange)}
             >
               {field.value ? (
-                <View style={styles.preview_container}>
+                <ThemedView type="secondary" style={styles.preview_container}>
                   <Image
                     source={{ uri: field.value }}
                     style={styles.preview_image}
@@ -95,9 +127,12 @@ export function ImageInput({
                       alt="Remover"
                     />
                   </Pressable>
-                </View>
+                </ThemedView>
               ) : (
-                <View style={styles.placeholder_container}>
+                <ThemedView
+                  type="secondary"
+                  style={[styles.placeholder_container]}
+                >
                   <Image
                     style={{ width: 100, height: 100 }}
                     source={require("@/assets/images/icons/upload.svg")}
@@ -106,15 +141,15 @@ export function ImageInput({
                   <ThemedText themeColor="quaternary">
                     Adicione uma imagem
                   </ThemedText>
-                </View>
+                </ThemedView>
               )}
             </Pressable>
             {error && (
               <ThemedText type="small" themeColor="warning">
-                {error}
+                {error.message}
               </ThemedText>
             )}
-          </View>
+          </ThemedView>
         );
       }}
     />

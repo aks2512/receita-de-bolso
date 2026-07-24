@@ -5,11 +5,14 @@ import { ThemedButton } from "@/components/themed-button";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { RECIPE_CATEGORIES_OPTIONS } from "@/constants/categories";
-import { Colors, MaxContentWidth, Spacing } from "@/constants/theme";
-import { useRecipeStore } from "@/stores/useRecipeStore";
+import { MaxContentWidth, Spacing } from "@/constants/theme";
+import { useThemeColors } from "@/hooks/use-theme-colors";
+import { useCreateRecipe } from "@/requests/create-recipe";
+import { useUpdateRecipe } from "@/requests/update-recipe";
 import { onlyNumbersMask } from "@/utils/masks";
 import { IRecipeForm, RecipeSchema } from "@/validations/recipe-schema";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useQueryClient } from "@tanstack/react-query";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
@@ -20,8 +23,6 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
-  useColorScheme,
-  View,
 } from "react-native";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -33,12 +34,36 @@ type Props = {
 };
 
 export function RecipeForm({ type = "register", formData }: Props) {
-  const addRecipe = useRecipeStore((state) => state.addRecipe);
-  const editRecipe = useRecipeStore((state) => state.editRecipe);
+  const queryClient = useQueryClient();
   const router = useRouter();
-  const scheme = useColorScheme();
-  const colors =
-    scheme === undefined || scheme === null ? Colors.light : Colors[scheme];
+  const colors = useThemeColors();
+
+  const { mutate: createMutate, isPending: createIsPending } = useCreateRecipe({
+    onSuccess: async () => {
+      Alert.alert("Sucesso", "Receita adicionada à sua lista local!");
+      await queryClient.invalidateQueries({ queryKey: ["get-recipes"] });
+      reset();
+      router.replace("/(tabs)");
+    },
+    onError: () => {
+      Alert.alert("Erro", "Não foi possível salvar a receita na lista.");
+    },
+  });
+
+  const { mutate: updateMutate, isPending: updateIsPending } = useUpdateRecipe({
+    onSuccess: async () => {
+      Alert.alert("Sucesso", "Receita editada com sucesso!");
+      reset();
+      await queryClient.invalidateQueries({ queryKey: ["get-recipes"] });
+      await queryClient.invalidateQueries({
+        queryKey: ["get-recipe", formData?.id],
+      });
+      router.replace(`/recipes/${formData?.id}`);
+    },
+    onError: () => {
+      Alert.alert("Erro", "Não foi possível salvar a receita na lista.");
+    },
+  });
 
   const {
     control,
@@ -52,8 +77,7 @@ export function RecipeForm({ type = "register", formData }: Props) {
       id: undefined,
       ingredients: [
         {
-          name: "",
-          amount: "",
+          description: "",
         },
       ],
       steps: [
@@ -87,42 +111,41 @@ export function RecipeForm({ type = "register", formData }: Props) {
   });
 
   const onSubmit = async (form: IRecipeForm) => {
-    try {
-      if (type === "register") {
-        addRecipe(form);
-        Alert.alert("Sucesso", "Receita adicionada à sua lista local!");
-        reset();
-        router.replace("/(tabs)");
-      } else {
-        editRecipe(form);
-        Alert.alert("Sucesso", "Receita editada com sucesso!");
-        reset();
-        router.replace(`/recipes/${formData?.id}`);
-      }
-    } catch (error) {
-      Alert.alert("Erro", "Não foi possível salvar a receita na lista.");
+    if (type === "register") {
+      createMutate(form);
+    } else {
+      updateMutate(form);
     }
   };
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
-      <ThemedView style={styles.container}>
+      <ThemedView
+        style={[styles.container, { backgroundColor: colors.background }]}
+      >
         <SafeAreaView style={styles.safeArea}>
           <ScrollView
-            style={styles.scrollView}
-            contentContainerStyle={styles.scrollContent}
+            style={styles.scroll_view}
+            contentContainerStyle={styles.scroll_content}
             showsVerticalScrollIndicator={false}
           >
-            <ThemedView style={styles.main}>
+            <ThemedView
+              style={[styles.main, { backgroundColor: colors.background }]}
+            >
               <Header
                 name={type === "register" ? "Nova receita" : "Editar receita"}
                 onBack={
                   type === "edit"
                     ? () => router.replace(`/recipes/${formData?.id}`)
-                    : undefined
+                    : () => router.replace("/")
                 }
               />
-              <View style={styles.input_group}>
+              <ThemedView
+                style={[
+                  styles.input_group,
+                  { backgroundColor: colors.background },
+                ]}
+              >
                 <ImageInput name="image" label="Imagem" control={control} />
                 <Input
                   name="name"
@@ -148,137 +171,171 @@ export function RecipeForm({ type = "register", formData }: Props) {
                   name="time"
                   label="Tempo de preparo"
                   keyboardType="number-pad"
-                  description="(minutos)"
+                  description="(opcional)"
                   maskFunction={onlyNumbersMask}
                   control={control}
-                  placeholder="Digite o tempo"
+                  placeholder="Digite o tempo em minutos"
                 />
-              </View>
-              <View style={styles.ingredients_container}>
-                <View style={styles.ingredients_header}>
+                <ThemedView
+                  style={[
+                    styles.field_array_container,
+                    { backgroundColor: colors.background },
+                  ]}
+                >
                   <ThemedText type="subtitle" themeColor="terciary">
                     Ingredientes
                   </ThemedText>
-                  <View style={styles.buttons}>
-                    <Pressable
-                      style={{
-                        ...styles.button,
-                        backgroundColor: colors.primary,
-                      }}
-                      onPress={() =>
-                        ingredientAppend({
-                          name: "",
-                          amount: "",
-                        })
-                      }
-                    >
-                      <Image
-                        style={{ width: 16, height: 16 }}
-                        source={require("@/assets/images/icons/plus.svg")}
-                        alt="Adicionar"
-                      />
-                    </Pressable>
-                    {ingredientFields.length > 0 && (
-                      <Pressable
-                        style={{
-                          ...styles.button,
-                          backgroundColor: colors.primary,
-                        }}
-                        onPress={() =>
-                          ingredientRemove(ingredientFields.length - 1)
-                        }
+                  <ThemedView
+                    style={[
+                      styles.field_array_inputs,
+                      { backgroundColor: colors.background },
+                    ]}
+                  >
+                    {ingredientFields.map((field, index) => (
+                      <ThemedView
+                        key={field.id}
+                        style={[
+                          styles.field_array_input_container,
+                          { backgroundColor: colors.background },
+                        ]}
                       >
-                        <Image
-                          style={{ width: 16, height: 16 }}
-                          source={require("@/assets/images/icons/remove.svg")}
-                          alt="Remover"
+                        <ThemedView
+                          style={[
+                            styles.buttons,
+                            { backgroundColor: colors.background },
+                          ]}
+                        >
+                          {ingredientFields.length - 1 === index && (
+                            <Pressable
+                              style={{
+                                ...styles.button,
+                                backgroundColor: colors.primary,
+                              }}
+                              onPress={() =>
+                                ingredientAppend({
+                                  description: "",
+                                })
+                              }
+                            >
+                              <Image
+                                style={{ width: 16, height: 16 }}
+                                source={require("@/assets/images/icons/plus.svg")}
+                                alt="Adicionar"
+                              />
+                            </Pressable>
+                          )}
+                          {ingredientFields.length > 0 &&
+                            index !== 0 &&
+                            ingredientFields.length - 1 === index && (
+                              <Pressable
+                                style={{
+                                  ...styles.button,
+                                  backgroundColor: colors.warning,
+                                }}
+                                onPress={() => ingredientRemove(index)}
+                              >
+                                <Image
+                                  style={{ width: 16, height: 16 }}
+                                  source={require("@/assets/images/icons/trash.svg")}
+                                  alt="Remover"
+                                />
+                              </Pressable>
+                            )}
+                        </ThemedView>
+                        <Input
+                          control={control}
+                          name={`ingredients.${index}.description`}
+                          placeholder="Digite a descrição"
                         />
-                      </Pressable>
+                      </ThemedView>
+                    ))}
+                    {errors.steps?.message && (
+                      <ThemedText type="small" themeColor="warning">
+                        {errors.steps?.message}
+                      </ThemedText>
                     )}
-                  </View>
-                </View>
-                <View style={styles.ingredients_inputs}>
-                  {ingredientFields.map((field, index) => (
-                    <View key={field.id} style={styles.ingredients_input_group}>
-                      <Input
-                        control={control}
-                        name={`ingredients.${index}.name`}
-                        placeholder="Digite o ingrediente"
-                      />
-                      <Input
-                        control={control}
-                        name={`ingredients.${index}.amount`}
-                        placeholder="Digite o quantidade"
-                      />
-                    </View>
-                  ))}
-                  {errors.ingredients?.message && (
-                    <ThemedText type="small" themeColor="warning">
-                      {errors.ingredients?.message}
-                    </ThemedText>
-                  )}
-                </View>
-              </View>
-              <View style={styles.steps_container}>
-                <View style={styles.steps_header}>
+                  </ThemedView>
+                </ThemedView>
+                <ThemedView
+                  style={[
+                    styles.field_array_container,
+                    { backgroundColor: colors.background },
+                  ]}
+                >
                   <ThemedText type="subtitle" themeColor="terciary">
                     Preparo
                   </ThemedText>
-                  <View style={styles.buttons}>
-                    <Pressable
-                      style={{
-                        ...styles.button,
-                        backgroundColor: colors.primary,
-                      }}
-                      onPress={() =>
-                        stepAppend({
-                          description: "",
-                        })
-                      }
-                    >
-                      <Image
-                        style={{ width: 16, height: 16 }}
-                        source={require("@/assets/images/icons/plus.svg")}
-                        alt="Adicionar"
-                      />
-                    </Pressable>
-                    {stepFields.length > 0 && (
-                      <Pressable
-                        style={{
-                          ...styles.button,
-                          backgroundColor: colors.primary,
-                        }}
-                        onPress={() => stepRemove(stepFields.length - 1)}
+                  <ThemedView style={styles.field_array_inputs}>
+                    {stepFields.map((field, index) => (
+                      <ThemedView
+                        key={field.id}
+                        style={[
+                          styles.field_array_input_container,
+                          { backgroundColor: colors.background },
+                        ]}
                       >
-                        <Image
-                          style={{ width: 16, height: 16 }}
-                          source={require("@/assets/images/icons/remove.svg")}
-                          alt="Remover"
+                        <ThemedView
+                          style={[
+                            styles.buttons,
+                            { backgroundColor: colors.background },
+                          ]}
+                        >
+                          {stepFields.length - 1 === index && (
+                            <Pressable
+                              style={{
+                                ...styles.button,
+                                backgroundColor: colors.primary,
+                              }}
+                              onPress={() =>
+                                stepAppend({
+                                  description: "",
+                                })
+                              }
+                            >
+                              <Image
+                                style={{ width: 16, height: 16 }}
+                                source={require("@/assets/images/icons/plus.svg")}
+                                alt="Adicionar"
+                              />
+                            </Pressable>
+                          )}
+                          {stepFields.length > 0 &&
+                            index !== 0 &&
+                            stepFields.length - 1 === index && (
+                              <Pressable
+                                style={{
+                                  ...styles.button,
+                                  backgroundColor: colors.warning,
+                                }}
+                                onPress={() => stepRemove(index)}
+                              >
+                                <Image
+                                  style={{ width: 16, height: 16 }}
+                                  source={require("@/assets/images/icons/trash.svg")}
+                                  alt="Remover"
+                                />
+                              </Pressable>
+                            )}
+                        </ThemedView>
+                        <Input
+                          control={control}
+                          name={`steps.${index}.description`}
+                          placeholder="Digite a descrição"
                         />
-                      </Pressable>
+                      </ThemedView>
+                    ))}
+                    {errors.steps?.message && (
+                      <ThemedText type="small" themeColor="warning">
+                        {errors.steps?.message}
+                      </ThemedText>
                     )}
-                  </View>
-                </View>
-                <View style={styles.steps_inputs}>
-                  {stepFields.map((field, index) => (
-                    <View key={field.id} style={styles.ingredients_input_group}>
-                      <Input
-                        control={control}
-                        name={`steps.${index}.description`}
-                        placeholder="Digite a descrição"
-                      />
-                    </View>
-                  ))}
-                  {errors.steps?.message && (
-                    <ThemedText type="small" themeColor="warning">
-                      {errors.steps?.message}
-                    </ThemedText>
-                  )}
-                </View>
-              </View>
+                  </ThemedView>
+                </ThemedView>
+              </ThemedView>
               <ThemedButton
                 type="title"
                 themeColor="primary"
+                disabled={createIsPending || updateIsPending}
                 onPress={handleSubmit(onSubmit)}
               >
                 Salvar
@@ -301,7 +358,6 @@ const styles = StyleSheet.create({
         paddingTop: 100,
       },
     }),
-    backgroundColor: Colors.background,
   },
   safeArea: {
     flex: 1,
@@ -309,54 +365,38 @@ const styles = StyleSheet.create({
     alignItems: "center",
     maxWidth: MaxContentWidth,
   },
-  scrollView: {
+  scroll_view: {
     width: "100%",
   },
-  scrollContent: {},
+  scroll_content: {},
   main: {
     alignItems: "stretch",
     justifyContent: "flex-start",
     flex: 1,
     gap: Spacing.three,
     width: "100%",
-    backgroundColor: Colors.background,
   },
   input_group: {
     gap: Spacing.two,
   },
-  ingredients_container: {
+  field_array_container: {
     gap: Spacing.two,
   },
-  ingredients_header: {
+  field_array_inputs: {
+    gap: Spacing.two,
+  },
+  field_array_input_container: {
     width: "100%",
+    alignItems: "flex-end",
+    gap: Spacing.one,
+  },
+  buttons: {
+    width: "auto",
     flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  ingredients_inputs: {
-    gap: Spacing.three,
-  },
-  ingredients_input_group: {
-    gap: Spacing.two,
-  },
-  steps_container: {
-    gap: Spacing.two,
-  },
-  steps_header: {
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  steps_inputs: {
     gap: Spacing.two,
   },
   button: {
     padding: Spacing.two,
     borderRadius: Spacing.two,
-  },
-  buttons: {
-    flexDirection: "row",
-    gap: Spacing.two,
   },
 });

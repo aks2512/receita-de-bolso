@@ -1,4 +1,4 @@
-import { Alert, Platform, ScrollView, StyleSheet, View } from "react-native";
+import { Alert, Platform, ScrollView, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Header } from "@/components/header";
@@ -6,72 +6,87 @@ import { Ingredient } from "@/components/ingredient";
 import { Step } from "@/components/step";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { Colors, MaxContentWidth, Spacing } from "@/constants/theme";
-import { useRecipeStore } from "@/stores/useRecipeStore";
+import { MaxContentWidth, Spacing } from "@/constants/theme";
+import { useThemeColors } from "@/hooks/use-theme-colors";
+import { useDeleteRecipe } from "@/requests/delete-recipe";
+import { useGetRecipe } from "@/requests/get-recipe";
 import { generateRecipePDF } from "@/utils/export";
-import { IRecipeForm } from "@/validations/recipe-schema";
+import { useQueryClient } from "@tanstack/react-query";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
 
 export default function RecipeScreen() {
+  const colors = useThemeColors();
+  const queryClient = useQueryClient();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const findRecipeById = useRecipeStore((state) => state.findRecipeById);
-  const removeRecipe = useRecipeStore((state) => state.deleteRecipe);
-  const recipe = findRecipeById(id) as IRecipeForm;
+  const { mutate: deleteMutate } = useDeleteRecipe({
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["get-recipes"] });
+      router.replace("/(tabs)");
+      Alert.alert("Sucesso", "Receita deletada com sucesso!");
+    },
+    onError: () => {
+      Alert.alert("Erro", "Houve um erro ao deletar a receita!");
+    },
+  });
+  const { data: recipe, isPending } = useGetRecipe(id);
   const router = useRouter();
 
-  return (
-    <ThemedView style={styles.container}>
+  return !isPending ? (
+    <ThemedView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       <SafeAreaView style={styles.safeArea}>
         <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
+          style={styles.scroll_view}
+          contentContainerStyle={styles.scroll_content}
           showsVerticalScrollIndicator={false}
         >
-          <ThemedView style={styles.main}>
-            <Header
-              name={recipe.name}
-              onBack={() => router.replace("/(tabs)")}
-              onExport={async () => await generateRecipePDF(recipe)}
-              onRemove={async () => {
-                await removeRecipe(recipe.id as string);
-                router.replace("/(tabs)");
-                Alert.alert("Sucesso", "Receita deletada com sucesso!");
-              }}
-              onEdit={() => router.replace(`/recipes/${id}/edit`)}
-            />
-            <Image
-              style={styles.image}
-              source={recipe.image}
-              alt={recipe.name}
-            />
+          {recipe ? (
+            <ThemedView
+              style={[styles.main, { backgroundColor: colors.background }]}
+            >
+              <Header
+                name={recipe.name}
+                onBack={() => router.replace("/(tabs)")}
+                onExport={async () => await generateRecipePDF(recipe)}
+                onRemove={async () => await deleteMutate(recipe.id as string)}
+                onEdit={() => router.replace(`/recipes/${id}/edit`)}
+              />
+              <Image
+                style={styles.image}
+                source={recipe.image || require("@/assets/images/no-image.png")}
+                alt={recipe.name}
+              />
 
-            <ThemedText>{recipe.description}</ThemedText>
-            <ThemedText type="subtitle">Ingredientes</ThemedText>
-            <View style={styles.list}>
-              {recipe.ingredients?.map((ingredient, index) => (
-                <Ingredient
-                  key={index}
-                  name={ingredient.name}
-                  amount={ingredient.amount}
-                />
-              ))}
-            </View>
-            <ThemedText type="subtitle">Preparo</ThemedText>
-            <View style={styles.list}>
-              {recipe.steps?.map((step, index) => (
-                <Step
-                  key={index}
-                  number={index + 1}
-                  description={step.description}
-                />
-              ))}
-            </View>
-          </ThemedView>
+              <ThemedText>{recipe.description}</ThemedText>
+              <ThemedText type="subtitle">Ingredientes</ThemedText>
+              <ThemedView style={styles.list}>
+                {recipe.ingredients?.map((ingredient, index) => (
+                  <Ingredient
+                    key={index}
+                    description={ingredient.description}
+                  />
+                ))}
+              </ThemedView>
+              <ThemedText type="subtitle">Preparo</ThemedText>
+              <ThemedView style={styles.list}>
+                {recipe.steps?.map((step, index) => (
+                  <Step
+                    key={index}
+                    number={index + 1}
+                    description={step.description}
+                  />
+                ))}
+              </ThemedView>
+            </ThemedView>
+          ) : (
+            <ThemedText>Nenhum dado da receita foi encontrado!</ThemedText>
+          )}
         </ScrollView>
       </SafeAreaView>
     </ThemedView>
-  );
+  ) : null;
 }
 
 const styles = StyleSheet.create({
@@ -84,7 +99,6 @@ const styles = StyleSheet.create({
         paddingTop: Spacing.four,
       },
     }),
-    backgroundColor: Colors.background,
   },
   safeArea: {
     flex: 1,
@@ -92,17 +106,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     maxWidth: MaxContentWidth,
   },
-  scrollView: {
+  scroll_view: {
     width: "100%",
   },
-  scrollContent: {},
+  scroll_content: {},
   main: {
     alignItems: "stretch",
     justifyContent: "flex-start",
     flex: 1,
     gap: Spacing.four,
     width: "100%",
-    backgroundColor: Colors.background,
   },
   image: {
     width: "100%",

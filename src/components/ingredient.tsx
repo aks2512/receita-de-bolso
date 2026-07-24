@@ -1,22 +1,20 @@
-import { Colors, Spacing } from "@/constants/theme";
+import { Spacing } from "@/constants/theme";
+import { useThemeColors } from "@/hooks/use-theme-colors";
 import React from "react";
-import { StyleSheet, useColorScheme, View } from "react-native";
+import { StyleSheet } from "react-native";
 import { ThemedText } from "./themed-text";
+import { ThemedView } from "./themed-view";
 
 type Props = {
-  name: string;
-  amount: string;
+  description: string;
 };
 
-export const Ingredient = ({ name, amount }: Props) => {
-  const scheme = useColorScheme();
-  const colors =
-    scheme === undefined || scheme === null ? Colors.light : Colors[scheme];
+export const Ingredient = ({ description }: Props) => {
+  const colors = useThemeColors();
   return (
-    <View style={{ ...styles.container, borderColor: colors.secondary }}>
-      <ThemedText themeColor="terciary">{name}</ThemedText>
-      <ThemedText themeColor="quinary">{amount}</ThemedText>
-    </View>
+    <ThemedView style={{ ...styles.container, borderColor: colors.secondary }}>
+      <ThemedText themeColor="terciary">{description}</ThemedText>
+    </ThemedView>
   );
 };
 

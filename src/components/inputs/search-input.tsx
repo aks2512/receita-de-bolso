@@ -1,14 +1,10 @@
-import { Colors, Spacing } from "@/constants/theme";
+import { Spacing } from "@/constants/theme";
+import { useThemeColors } from "@/hooks/use-theme-colors";
 import { Image } from "expo-image";
 import React, { ComponentProps } from "react";
 import { Controller } from "react-hook-form";
-import {
-  Platform,
-  StyleSheet,
-  TextInput,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Platform, StyleSheet, TextInput } from "react-native";
+import { ThemedView } from "../themed-view";
 
 type Props = Omit<ComponentProps<typeof TextInput>, "style"> & {
   name: string;
@@ -16,25 +12,27 @@ type Props = Omit<ComponentProps<typeof TextInput>, "style"> & {
 };
 
 export const SearchInput = ({ name, control, ...rest }: Props) => {
-  const scheme = useColorScheme();
-  const colors =
-    scheme === undefined || scheme === null ? Colors.light : Colors[scheme];
+  const colors = useThemeColors();
 
   return (
     <Controller
       name={name}
       control={control}
       render={({ field }) => (
-        <View
+        <ThemedView
           style={{
             ...styles.container,
             borderColor: colors.quaternary,
-            backgroundColor: colors.white,
+            backgroundColor: colors.background,
           }}
         >
           <TextInput
             placeholderTextColor={colors.quinary}
-            style={{ ...styles.input, color: colors.quaternary }}
+            style={{
+              ...styles.input,
+              color: colors.quaternary,
+              backgroundColor: colors.background,
+            }}
             onChangeText={field.onChange}
             value={field.value}
             {...rest}
@@ -44,7 +42,7 @@ export const SearchInput = ({ name, control, ...rest }: Props) => {
             alt="Pesquisar"
             source={require("@/assets/images/icons/search.svg")}
           />
-        </View>
+        </ThemedView>
       )}
     />
   );

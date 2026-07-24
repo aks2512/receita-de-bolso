@@ -1,7 +1,9 @@
-import { Colors, Spacing } from "@/constants/theme";
+import { Spacing } from "@/constants/theme";
+import { useThemeColors } from "@/hooks/use-theme-colors";
 import React from "react";
-import { StyleSheet, useColorScheme, View } from "react-native";
+import { StyleSheet, Text } from "react-native";
 import { ThemedText } from "./themed-text";
+import { ThemedView } from "./themed-view";
 
 type Props = {
   number: number;
@@ -9,21 +11,22 @@ type Props = {
 };
 
 export const Step = ({ number, description }: Props) => {
-  const scheme = useColorScheme();
-  const colors =
-    scheme === undefined || scheme === null ? Colors.light : Colors[scheme];
+  const colors = useThemeColors();
   return (
-    <View style={{ ...styles.container, borderColor: colors.secondary }}>
-      <ThemedText
-        themeColor="white"
-        style={{ ...styles.number, backgroundColor: colors.primary }}
+    <ThemedView style={{ ...styles.container, borderColor: colors.secondary }}>
+      <Text
+        style={{
+          ...styles.number,
+          backgroundColor: colors.primary,
+          color: colors.white,
+        }}
       >
         {number}
-      </ThemedText>
+      </Text>
       <ThemedText style={styles.description} themeColor="quinary">
         {description}
       </ThemedText>
-    </View>
+    </ThemedView>
   );
 };
 
@@ -43,6 +46,7 @@ const styles = StyleSheet.create({
     height: Spacing.four,
     display: "flex",
     alignItems: "center",
+    fontSize: 14,
     justifyContent: "center",
     alignSelf: "center",
   },

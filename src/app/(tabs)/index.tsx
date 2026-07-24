@@ -1,22 +1,27 @@
-import { Platform, ScrollView, StyleSheet } from "react-native";
+import { Platform, Pressable, ScrollView, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Categories } from "@/components/categories";
 import { Header } from "@/components/header";
 import { SearchInput } from "@/components/inputs/search-input";
 import { Recipes } from "@/components/recipes";
+import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { RECIPE_CATEGORIES } from "@/constants/categories";
-import { Colors, MaxContentWidth, Spacing } from "@/constants/theme";
+import { MaxContentWidth, Spacing } from "@/constants/theme";
 import { useDebounce } from "@/hooks/use-debounce";
-import { useRecipeStore } from "@/stores/useRecipeStore";
+import { useThemeColors } from "@/hooks/use-theme-colors";
+import { useGetRecipes } from "@/requests/get-recipe";
 import { ISearchForm, SearchSchema } from "@/validations/search-schema";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { Image } from "expo-image";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useShallow } from "zustand/react/shallow";
 
 export default function HomeScreen() {
+  const router = useRouter();
+  const colors = useThemeColors();
   const { control, watch } = useForm<ISearchForm>({
     mode: "onChange",
     resolver: yupResolver(SearchSchema),
@@ -29,41 +34,47 @@ export default function HomeScreen() {
   const debouncedSearchValue = useDebounce(searchValue, 600);
   const [selectedCategory, setSelectedCategory] = useState("all");
 
-  const recipes = useRecipeStore(
-    useShallow((state) =>
-      state.recipes.filter((recipe) => {
-        const matchesSearch = recipe?.name
-          ?.toLowerCase()
-          ?.includes(debouncedSearchValue?.toLowerCase());
-
-        const matchesCategory =
-          selectedCategory === "all" ||
-          recipe.category.value === selectedCategory;
-
-        return matchesSearch && matchesCategory;
-      }),
-    ),
-  );
+  const { data: recipes, isPending } = useGetRecipes({
+    search: debouncedSearchValue,
+    selectedCategory,
+  });
 
   const handleCategory = (value: string) => {
     setSelectedCategory(value);
   };
 
-  return (
-    <ThemedView style={styles.container}>
+  return !isPending ? (
+    <ThemedView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       <SafeAreaView style={styles.safeArea}>
         <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
+          style={styles.scroll_view}
+          contentContainerStyle={styles.scroll_content}
           showsVerticalScrollIndicator={false}
         >
-          <ThemedView style={styles.main}>
+          <ThemedView
+            style={[styles.main, { backgroundColor: colors.background }]}
+          >
             <Header name="Home" />
+            <Pressable onPress={() => router.replace("/new-recipe")}>
+              <ThemedView type="primary" style={styles.button}>
+                <Image
+                  style={{ width: 24, height: 24, tintColor: colors.white }}
+                  source={require("@/assets/images/icons/recipe.svg")}
+                  alt="Adicionar receita"
+                />
+                <ThemedText themeColor="white" style={{ flex: 0 }}>
+                  Adicionar Receita
+                </ThemedText>
+              </ThemedView>
+            </Pressable>
             <SearchInput
               name="search"
               control={control}
               placeholder="Buscar receita"
             />
+
             <Categories
               categories={RECIPE_CATEGORIES}
               selected={selectedCategory}
@@ -74,7 +85,7 @@ export default function HomeScreen() {
         </ScrollView>
       </SafeAreaView>
     </ThemedView>
-  );
+  ) : null;
 }
 
 const styles = StyleSheet.create({
@@ -88,7 +99,6 @@ const styles = StyleSheet.create({
         paddingTop: 100,
       },
     }),
-    backgroundColor: Colors.background,
   },
   safeArea: {
     flex: 1,
@@ -96,16 +106,24 @@ const styles = StyleSheet.create({
     alignItems: "center",
     maxWidth: MaxContentWidth,
   },
-  scrollView: {
+  scroll_view: {
     width: "100%",
   },
-  scrollContent: {},
+  scroll_content: {},
   main: {
     alignItems: "stretch",
     justifyContent: "flex-start",
     flex: 1,
     gap: Spacing.four,
     width: "100%",
-    backgroundColor: Colors.background,
+  },
+  button: {
+    borderRadius: Spacing.two,
+    paddingVertical: Spacing.two,
+    paddingHorizontal: Spacing.three,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: Spacing.two,
   },
 });

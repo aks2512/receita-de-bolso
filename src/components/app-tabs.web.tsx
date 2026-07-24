@@ -6,12 +6,12 @@ import {
   TabTrigger,
   TabTriggerSlotProps,
 } from "expo-router/ui";
-import { Pressable, StyleSheet, useColorScheme, View } from "react-native";
+import { Pressable, StyleSheet } from "react-native";
 
 import { ThemedText } from "./themed-text";
 import { ThemedView } from "./themed-view";
 
-import { Colors, MaxContentWidth, Spacing } from "@/constants/theme";
+import { MaxContentWidth, Spacing } from "@/constants/theme";
 
 export default function AppTabs() {
   return (
@@ -54,12 +54,8 @@ export function TabButton({
 }
 
 export function CustomTabList(props: TabListProps) {
-  const scheme = useColorScheme();
-  const colors =
-    scheme === undefined || scheme === null ? Colors.light : Colors[scheme];
-
   return (
-    <View {...props} style={styles.tabListContainer}>
+    <ThemedView {...props} style={styles.tabListContainer}>
       <ThemedView type="backgroundElement" style={styles.innerContainer}>
         <ThemedText type="small" style={styles.brandText}>
           Receita de Bolso
@@ -67,7 +63,7 @@ export function CustomTabList(props: TabListProps) {
 
         {props.children}
       </ThemedView>
-    </View>
+    </ThemedView>
   );
 }
 

@@ -1,74 +1,86 @@
-import { Colors, Spacing } from "@/constants/theme";
+import { Spacing } from "@/constants/theme";
+import { useThemeColors } from "@/hooks/use-theme-colors";
 import { generateRecipePDF } from "@/utils/export";
 import { IRecipeForm } from "@/validations/recipe-schema";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
 import React from "react";
-import { Pressable, StyleSheet, useColorScheme, View } from "react-native";
+import { Pressable, StyleSheet } from "react-native";
 import { ThemedText } from "./themed-text";
+import { ThemedView } from "./themed-view";
 
 type Props = {
   recipes: IRecipeForm[];
 };
 
 export const Recipes = ({ recipes }: Props) => {
-  const scheme = useColorScheme();
-  const colors =
-    scheme === undefined || scheme === null ? Colors.light : Colors[scheme];
+  const colors = useThemeColors();
 
   return (
-    <View style={styles.container}>
+    <ThemedView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       <ThemedText type="subtitle">Receitas</ThemedText>
-      <View style={styles.list}>
-        {recipes.map((item) => (
-          <Link
-            key={item.id}
-            href={{
-              pathname: "/recipes/[id]",
-              params: { id: item.id as string, name: item.name },
-            }}
-            style={styles.link}
-          >
-            <View style={styles.item}>
-              <View>
-                <ThemedText
-                  style={styles.item_time}
-                  type="small"
-                  themeColor="terciary"
-                >
-                  {item.time} min
-                </ThemedText>
-                <Image
-                  style={styles.item_image}
-                  source={item.image}
-                  alt={item.name}
-                />
-                <Pressable
-                  style={styles.item_export}
-                  onPress={async () => await generateRecipePDF(item)}
-                >
+      {recipes.length > 0 ? (
+        <ThemedView
+          style={[styles.list, { backgroundColor: colors.background }]}
+        >
+          {recipes.map((item) => (
+            <Link
+              key={item.id}
+              href={{
+                pathname: "/recipes/[id]",
+                params: { id: item.id as string, name: item.name },
+              }}
+              style={styles.link}
+            >
+              <ThemedView style={styles.item}>
+                <ThemedView>
+                  {item.time && (
+                    <ThemedText
+                      style={styles.item_time}
+                      type="small"
+                      themeColor="terciary"
+                    >
+                      {item.time} min
+                    </ThemedText>
+                  )}
                   <Image
-                    style={{ width: 30, height: 30 }}
-                    source={require("@/assets/images/icons/export.svg")}
-                    alt="Exportar"
+                    style={styles.item_image}
+                    source={
+                      item.image || require("@/assets/images/no-image.png")
+                    }
+                    alt={item.name}
                   />
-                </Pressable>
-              </View>
-              <View
-                style={{
-                  ...styles.item_content,
-                  backgroundColor: colors.secondary,
-                }}
-              >
-                <ThemedText type="default" themeColor="quinary">
-                  {item.name}
-                </ThemedText>
-              </View>
-            </View>
-          </Link>
-        ))}
-      </View>
-    </View>
+                  <Pressable
+                    style={styles.item_export}
+                    onPress={async () => await generateRecipePDF(item)}
+                  >
+                    <Image
+                      style={{ width: 30, height: 30 }}
+                      source={require("@/assets/images/icons/export.svg")}
+                      alt="Exportar"
+                    />
+                  </Pressable>
+                </ThemedView>
+                <ThemedView
+                  style={{
+                    ...styles.item_content,
+                    backgroundColor: colors.secondary,
+                  }}
+                >
+                  <ThemedText style={styles.item_text} themeColor="quinary">
+                    {item.name}
+                  </ThemedText>
+                </ThemedView>
+              </ThemedView>
+            </Link>
+          ))}
+        </ThemedView>
+      ) : (
+        <ThemedText>Nenhuma receita encontrada!</ThemedText>
+      )}
+    </ThemedView>
   );
 };
 
@@ -126,5 +138,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: Spacing.three,
+  },
+  item_text: {
+    flex: 0,
   },
 });

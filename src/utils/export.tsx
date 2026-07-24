@@ -5,9 +5,13 @@ import * as Sharing from "expo-sharing";
 import { Alert } from "react-native";
 
 const getLocalImageAsBase64 = async (
-  fileUri: string,
+  fileUri?: string | null,
 ): Promise<string | null> => {
   try {
+    if (fileUri === undefined || fileUri === null) {
+      return null;
+    }
+
     // Certifica-se de que o caminho é uma URL de arquivo local válida
     if (!fileUri.startsWith("file://") && !fileUri.startsWith("/")) {
       return null;
@@ -31,14 +35,21 @@ const getLocalImageAsBase64 = async (
 
 export const generateRecipePDF = async (recipe: IRecipeForm) => {
   try {
-    const recipeImageBase64 = await getLocalImageAsBase64(
-      recipe.image as string,
-    );
+    const recipeImageBase64 = await getLocalImageAsBase64(recipe.image);
     const htmlContent = `
       <html>
         <head>
           <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
           <style>
+            @page {
+              margin: 40px 20px;
+            }
+            body { 
+              font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+              padding: 24px; 
+              color: #222; 
+              background-color: #fff;
+            }
             body { 
               font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
               padding: 24px; 
@@ -69,6 +80,12 @@ export const generateRecipePDF = async (recipe: IRecipeForm) => {
               line-height: 24px; 
               margin: 0 0 24px 0;
             }
+            .ingredients { 
+              color: #444; 
+              font-size: 16px; 
+              line-height: 24px; 
+              margin: 0 0 24px 0;
+            }
             h3 { 
               color: #111; 
               font-size: 22px; 
@@ -90,9 +107,6 @@ export const generateRecipePDF = async (recipe: IRecipeForm) => {
             }
             .ingredient-name {
               color: #333;
-            }
-            .amount { 
-              color: #888; 
             }
             .steps-list {
               padding: 0;
@@ -128,22 +142,25 @@ export const generateRecipePDF = async (recipe: IRecipeForm) => {
           <div class="recipe-card">
             <h1>${recipe.name}</h1>
             
-            <img 
+            ${
+              recipeImageBase64
+                ? `<img 
               class="recipe-image" 
               src="${recipeImageBase64}" 
               alt="${recipe.name}" 
-            />
+            />`
+                : ""
+            }
             
-            <p class="description">${recipe.description}</p>
+            <p class="description">${recipe.description || ""}</p>
             
             <h3>Ingredientes</h3>
             <ul class="ingredients-list">
               ${recipe.ingredients
                 ?.map(
-                  (ing) => `
+                  (ingredient) => `
                 <li class="ingredient-item">
-                  <span class="ingredient-name">${ing.name}</span>
-                  <span class="amount">${ing.amount}</span>
+                  <span class="ingredient-name">${ingredient.description}</span>
                 </li>`,
                 )
                 .join("")}
@@ -168,6 +185,12 @@ export const generateRecipePDF = async (recipe: IRecipeForm) => {
 
     const { uri: tempUri } = await Print.printToFileAsync({
       html: htmlContent,
+      margins: {
+        left: 20,
+        top: 40,
+        right: 20,
+        bottom: 40,
+      },
     });
 
     if (await Sharing.isAvailableAsync()) {

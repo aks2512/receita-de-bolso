@@ -30,11 +30,8 @@ export const processSharedLink = async (videoUrl: string) => {
         "name": "Nome curto e claro da receita",
         "description": "Resumo em uma frase do prato (máximo 100 caracteres)",
         "time": "Total de minutos apenas como número inteiro, sem letras ou textos (ex: se for 1 hora coloque 60, se for 30 minutos coloque 30)",
-        "ingredients": [
-          { 
-            "name": "Nome do ingrediente", 
-            "amount": "Apenas a quantidade e unidade de medida (ex: '200g', '2 colheres')" 
-          }
+        "ingredients": [ 
+          { "description": "Quantidade, unidade de medida e nome do ingrediente (ex: '200g de açucar', '2 colheres de sal')" }
         ],
         "steps": [
           { "description": "Texto curto descrevendo a instrução deste passo sequencial" }

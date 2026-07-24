@@ -1,14 +1,14 @@
-import { useColorScheme } from "react-native";
-
-import { Colors, Spacing } from "@/constants/theme";
+import { Spacing } from "@/constants/theme";
+import { useThemeColors } from "@/hooks/use-theme-colors";
+import { useConfigStore } from "@/stores/useConfigStore";
 import { Image } from "expo-image";
 import { Tabs } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function AppTabs() {
-  const scheme = useColorScheme();
-  const colors =
-    Colors[scheme === undefined || scheme === null ? "light" : scheme];
+  const config = useConfigStore((state) => state.config);
+  const fontSizeMult = config.font_size / 100;
+  const colors = useThemeColors();
   const insets = useSafeAreaInsets();
 
   return (
@@ -18,7 +18,7 @@ export default function AppTabs() {
         tabBarInactiveTintColor: colors.quaternary,
         tabBarStyle: {
           borderWidth: 1,
-          backgroundColor: colors.white,
+          backgroundColor: colors.background,
           borderColor: colors.secondary,
           justifyContent: "center",
           alignItems: "baseline",
@@ -36,7 +36,7 @@ export default function AppTabs() {
           title: "Home",
           tabBarLabelStyle: {
             marginTop: 4,
-            fontSize: 16,
+            fontSize: 16 * fontSizeMult,
             fontWeight: "regular",
             height: 40,
           },
@@ -50,37 +50,18 @@ export default function AppTabs() {
       />
 
       <Tabs.Screen
-        name="new-recipe"
+        name="config"
         options={{
-          title: "Nova Receita",
+          title: "Configuração",
           tabBarLabelStyle: {
             marginTop: 4,
-            fontSize: 16,
+            fontSize: 16 * fontSizeMult,
             fontWeight: "regular",
             height: 40,
           },
           tabBarIcon: ({ color }) => (
             <Image
-              source={require("@/assets/images/tabIcons/recipe.svg")}
-              style={{ width: 40, height: 40, tintColor: color }}
-            />
-          ),
-        }}
-      />
-
-      <Tabs.Screen
-        name="account"
-        options={{
-          title: "Conta",
-          tabBarLabelStyle: {
-            marginTop: 4,
-            fontSize: 16,
-            fontWeight: "regular",
-            height: 40,
-          },
-          tabBarIcon: ({ color }) => (
-            <Image
-              source={require("@/assets/images/tabIcons/account.svg")}
+              source={require("@/assets/images/tabIcons/config.svg")}
               style={{ width: 40, height: 40, tintColor: color }}
             />
           ),

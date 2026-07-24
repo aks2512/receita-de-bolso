@@ -1,8 +1,9 @@
 import { Image } from "expo-image";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import Animated, { Easing, Keyframe } from "react-native-reanimated";
 
 import classes from "./animated-icon.module.css";
+import { ThemedView } from "./themed-view";
 const DURATION = 300;
 
 export function AnimatedSplashOverlay() {
@@ -56,7 +57,7 @@ const glowKeyframe = new Keyframe({
 
 export function AnimatedIcon() {
   return (
-    <View style={styles.iconContainer}>
+    <ThemedView style={styles.iconContainer}>
       <Animated.View
         style={styles.background}
         entering={keyframe.duration(DURATION)}
@@ -70,10 +71,10 @@ export function AnimatedIcon() {
       >
         <Image
           style={styles.image}
-          source={require("@/assets/images/icon.png")}
+          source={require("@/assets/images/icon.jpg")}
         />
       </Animated.View>
-    </View>
+    </ThemedView>
   );
 }
 

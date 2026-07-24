@@ -1,13 +1,9 @@
-import { Colors, Spacing } from "@/constants/theme";
+import { Spacing } from "@/constants/theme";
+import { useThemeColors } from "@/hooks/use-theme-colors";
 import { Image } from "expo-image";
-import {
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Pressable, ScrollView, StyleSheet } from "react-native";
 import { ThemedText } from "./themed-text";
+import { ThemedView } from "./themed-view";
 
 type Props = {
   categories?: {
@@ -20,12 +16,12 @@ type Props = {
 };
 
 export const Categories = ({ categories, selected, onChange }: Props) => {
-  const scheme = useColorScheme();
-  const colors =
-    scheme === undefined || scheme === null ? Colors.light : Colors[scheme];
+  const colors = useThemeColors();
 
   return (
-    <View style={styles.container}>
+    <ThemedView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       <ThemedText type="subtitle">Categorias</ThemedText>
       <ScrollView
         horizontal
@@ -38,7 +34,7 @@ export const Categories = ({ categories, selected, onChange }: Props) => {
             onPress={() => onChange(category.value)}
             style={styles.category_container}
           >
-            <View
+            <ThemedView
               style={{
                 ...styles.category_image,
                 backgroundColor:
@@ -59,35 +55,32 @@ export const Categories = ({ categories, selected, onChange }: Props) => {
                 source={category.image}
                 alt={category.text}
               />
-            </View>
+            </ThemedView>
             <ThemedText key={index} type="small">
               {category.text}
             </ThemedText>
           </Pressable>
         ))}
       </ScrollView>
-    </View>
+    </ThemedView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    display: "flex",
     flexDirection: "column",
     gap: Spacing.two,
     overflowX: "auto",
   },
   categories_content_container: {
-    display: "flex",
     gap: Spacing.two,
     alignItems: "flex-start",
   },
   category_container: {
-    display: "flex",
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    gap: 4,
+    gap: Spacing.one,
   },
   category_image: {
     width: 80,
