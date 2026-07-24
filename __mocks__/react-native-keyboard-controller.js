@@ -1,5 +1,5 @@
-const React = require('react');
-const { View } = require('react-native');
+const React = require("react");
+const { View } = require("react-native");
 
 // Provide a very small KeyboardAvoidingView replacement used in tests
 exports.KeyboardAvoidingView = ({ children, ...rest }) => {

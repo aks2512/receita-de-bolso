@@ -13,7 +13,8 @@ module.exports = {
     "^expo-router$": "<rootDir>/__mocks__/expo-router.tsx",
     "^expo-image$": "<rootDir>/__mocks__/expo-image.tsx",
     "^expo-image-picker$": "<rootDir>/__mocks__/expo-image-picker.tsx",
-      "^react-native-keyboard-controller$": "<rootDir>/__mocks__/react-native-keyboard-controller.js",
+    "^react-native-keyboard-controller$":
+      "<rootDir>/__mocks__/react-native-keyboard-controller.js",
     "^expo-sqlite$": "<rootDir>/__mocks__/expo-sqlite.js",
     "^react-native/Libraries/BatchedBridge/NativeModules$":
       "<rootDir>/__mocks__/react-native-native-modules.js",

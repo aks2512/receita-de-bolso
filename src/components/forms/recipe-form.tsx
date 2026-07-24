@@ -216,6 +216,8 @@ export function RecipeForm({ type = "register", formData }: Props) {
                                   description: "",
                                 })
                               }
+                              accessibilityLabel={`add-ingredient`}
+                              accessibilityRole="button"
                             >
                               <Image
                                 style={{ width: 16, height: 16 }}
@@ -233,6 +235,8 @@ export function RecipeForm({ type = "register", formData }: Props) {
                                   backgroundColor: colors.warning,
                                 }}
                                 onPress={() => ingredientRemove(index)}
+                                accessibilityLabel={`remove-ingredient-${index}`}
+                                accessibilityRole="button"
                               >
                                 <Image
                                   style={{ width: 16, height: 16 }}
@@ -246,6 +250,7 @@ export function RecipeForm({ type = "register", formData }: Props) {
                           control={control}
                           name={`ingredients.${index}.description`}
                           placeholder="Digite a descrição"
+                          accessibilityLabel={`ingredient-${index}`}
                         />
                       </ThemedView>
                     ))}
@@ -291,6 +296,8 @@ export function RecipeForm({ type = "register", formData }: Props) {
                                   description: "",
                                 })
                               }
+                              accessibilityLabel={`add-step`}
+                              accessibilityRole="button"
                             >
                               <Image
                                 style={{ width: 16, height: 16 }}
@@ -308,6 +315,8 @@ export function RecipeForm({ type = "register", formData }: Props) {
                                   backgroundColor: colors.warning,
                                 }}
                                 onPress={() => stepRemove(index)}
+                                accessibilityLabel={`remove-step-${index}`}
+                                accessibilityRole="button"
                               >
                                 <Image
                                   style={{ width: 16, height: 16 }}
@@ -321,6 +330,7 @@ export function RecipeForm({ type = "register", formData }: Props) {
                           control={control}
                           name={`steps.${index}.description`}
                           placeholder="Digite a descrição"
+                          accessibilityLabel={`step-${index}`}
                         />
                       </ThemedView>
                     ))}
