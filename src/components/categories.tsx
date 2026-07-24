@@ -1,5 +1,6 @@
 import { Spacing } from "@/constants/theme";
 import { useThemeColors } from "@/hooks/use-theme-colors";
+import { useTranslation } from "@/i18n/useTranslation";
 import { Image } from "expo-image";
 import { Pressable, ScrollView, StyleSheet } from "react-native";
 import { ThemedText } from "./themed-text";
@@ -17,12 +18,13 @@ type Props = {
 
 export const Categories = ({ categories, selected, onChange }: Props) => {
   const colors = useThemeColors();
+  const { t } = useTranslation();
 
   return (
     <ThemedView
       style={[styles.container, { backgroundColor: colors.background }]}
     >
-      <ThemedText type="subtitle">Categorias</ThemedText>
+      <ThemedText type="subtitle">{t("categories")}</ThemedText>
       <ScrollView
         horizontal
         contentContainerStyle={styles.categories_content_container}

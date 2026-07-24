@@ -32,13 +32,16 @@ Mocks added for tests (see `__mocks__/`):
 
 ## Tests added
 
-- `src/components/forms/recipe-form.test.tsx` — covers validation, adding items and submit (mutations mocked).
+- `src/components/forms/recipe-form.test.tsx` — covers validation, add/remove ingredient and step inputs, and submit behavior with mocked create/update request hooks.
 - `styleMock.js` — CSS mock
+
+## Recent UI additions
+
+- `src/components/forms/config-form.tsx` — added language select for `pt` / `en` and wired translation support to `src/i18n`.
 
 ## Test guidance and Drizzle note
 
-- Prefer mocking request hooks instead of the DB driver in unit tests: mock `@/requests/create-recipe` and `@/requests/update-recipe` to return stubbed `useCreateRecipe` / `useUpdateRecipe` implementations. This avoids invoking `drizzle-orm` + `expo-sqlite` internals during unit tests.
-- If a deeper integration test is required, either supply a full `expo-sqlite` mock that implements the synchronous calls `drizzle` expects, or run integration tests against a real SQLite instance.
+- Prefer mocking request hooks instead of the DB driver in unit tests: mock `@/requests/create-recipe` and `@/requests/update-recipe` to return stubbed `useCreateRecipe` / `useUpdateRecipe` implementations. This avoids invoking `drizzle-orm` + `expo-sqlite` internals during unit tests.- For localized button labels, use stable `testID` selectors in tests so the suite does not break when translation text changes.- If a deeper integration test is required, either supply a full `expo-sqlite` mock that implements the synchronous calls `drizzle` expects, or run integration tests against a real SQLite instance.
 
 ## Linting / devDependencies
 

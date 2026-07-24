@@ -1,5 +1,6 @@
 import { Spacing } from "@/constants/theme";
 import { useThemeColors } from "@/hooks/use-theme-colors";
+import { useTranslation } from "@/i18n/useTranslation";
 import { useConfigStore } from "@/stores/useConfigStore";
 import { Image } from "expo-image";
 import { Tabs } from "expo-router";
@@ -7,6 +8,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function AppTabs() {
   const config = useConfigStore((state) => state.config);
+  const { t } = useTranslation();
   const fontSizeMult = config.font_size / 100;
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
@@ -33,7 +35,7 @@ export default function AppTabs() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Home",
+          title: t("home"),
           tabBarLabelStyle: {
             marginTop: 4,
             fontSize: 16 * fontSizeMult,
@@ -52,7 +54,7 @@ export default function AppTabs() {
       <Tabs.Screen
         name="config"
         options={{
-          title: "Configuração",
+          title: t("configuration"),
           tabBarLabelStyle: {
             marginTop: 4,
             fontSize: 16 * fontSizeMult,

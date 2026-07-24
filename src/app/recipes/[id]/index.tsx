@@ -8,6 +8,7 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { MaxContentWidth, Spacing } from "@/constants/theme";
 import { useThemeColors } from "@/hooks/use-theme-colors";
+import { useTranslation } from "@/i18n/useTranslation";
 import { useDeleteRecipe } from "@/requests/delete-recipe";
 import { useGetRecipe } from "@/requests/get-recipe";
 import { generateRecipePDF } from "@/utils/export";
@@ -19,14 +20,16 @@ export default function RecipeScreen() {
   const colors = useThemeColors();
   const queryClient = useQueryClient();
   const { id } = useLocalSearchParams<{ id: string }>();
+  const { t } = useTranslation();
+
   const { mutate: deleteMutate } = useDeleteRecipe({
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["get-recipes"] });
       router.replace("/(tabs)");
-      Alert.alert("Sucesso", "Receita deletada com sucesso!");
+      Alert.alert(t("success_recipe_deleted"), t("success_recipe_deleted"));
     },
     onError: () => {
-      Alert.alert("Erro", "Houve um erro ao deletar a receita!");
+      Alert.alert(t("error_recipe_delete"), t("error_recipe_delete"));
     },
   });
   const { data: recipe, isPending } = useGetRecipe(id);
@@ -60,7 +63,7 @@ export default function RecipeScreen() {
               />
 
               <ThemedText>{recipe.description}</ThemedText>
-              <ThemedText type="subtitle">Ingredientes</ThemedText>
+              <ThemedText type="subtitle">{t("ingredients")}</ThemedText>
               <ThemedView style={styles.list}>
                 {recipe.ingredients?.map((ingredient, index) => (
                   <Ingredient
@@ -69,7 +72,7 @@ export default function RecipeScreen() {
                   />
                 ))}
               </ThemedView>
-              <ThemedText type="subtitle">Preparo</ThemedText>
+              <ThemedText type="subtitle">{t("preparation")}</ThemedText>
               <ThemedView style={styles.list}>
                 {recipe.steps?.map((step, index) => (
                   <Step
@@ -81,7 +84,7 @@ export default function RecipeScreen() {
               </ThemedView>
             </ThemedView>
           ) : (
-            <ThemedText>Nenhum dado da receita foi encontrado!</ThemedText>
+            <ThemedText>{t("recipe_not_found")}</ThemedText>
           )}
         </ScrollView>
       </SafeAreaView>

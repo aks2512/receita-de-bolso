@@ -1,5 +1,6 @@
 import { Spacing } from "@/constants/theme";
 import { useThemeColors } from "@/hooks/use-theme-colors";
+import { useTranslation } from "@/i18n/useTranslation";
 import { Image } from "expo-image";
 import React from "react";
 import { Pressable, StyleSheet } from "react-native";
@@ -16,6 +17,7 @@ type Props = {
 
 export const Header = ({ name, onExport, onEdit, onRemove, onBack }: Props) => {
   const colors = useThemeColors();
+  const { t } = useTranslation();
 
   return (
     <ThemedView
@@ -31,13 +33,13 @@ export const Header = ({ name, onExport, onEdit, onRemove, onBack }: Props) => {
         {onBack && (
           <Pressable
             onPress={onBack}
-            accessibilityLabel="Voltar"
+            accessibilityLabel={t("back")}
             accessibilityRole="button"
           >
             <Image
               style={{ width: 40, height: 40, tintColor: colors.terciary }}
               source={require("@/assets/images/icons/back_arrow.svg")}
-              alt="Voltar"
+              alt={t("back")}
             />
           </Pressable>
         )}
@@ -53,13 +55,13 @@ export const Header = ({ name, onExport, onEdit, onRemove, onBack }: Props) => {
               backgroundColor: colors.blue,
             }}
             onPress={onEdit}
-            accessibilityLabel="Editar"
+            accessibilityLabel={t("edit")}
             accessibilityRole="button"
           >
             <Image
               style={{ width: 24, height: 24 }}
               source={require("@/assets/images/icons/edit.svg")}
-              alt="Editar"
+              alt={t("edit")}
             />
           </Pressable>
         )}
@@ -70,13 +72,13 @@ export const Header = ({ name, onExport, onEdit, onRemove, onBack }: Props) => {
               backgroundColor: colors.warning,
             }}
             onPress={onRemove}
-            accessibilityLabel="Deletar"
+            accessibilityLabel={t("delete")}
             accessibilityRole="button"
           >
             <Image
               style={{ width: 24, height: 24 }}
               source={require("@/assets/images/icons/trash.svg")}
-              alt="Deletar"
+              alt={t("delete")}
             />
           </Pressable>
         )}
@@ -84,13 +86,13 @@ export const Header = ({ name, onExport, onEdit, onRemove, onBack }: Props) => {
           <Pressable
             style={{ ...styles.button, backgroundColor: colors.white }}
             onPress={onExport}
-            accessibilityLabel="Exportar"
+            accessibilityLabel={t("export")}
             accessibilityRole="button"
           >
             <Image
               style={{ width: 40, height: 40 }}
               source={require("@/assets/images/icons/export.svg")}
-              alt="Exportar"
+              alt={t("export")}
             />
           </Pressable>
         )}

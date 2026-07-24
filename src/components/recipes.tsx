@@ -1,5 +1,6 @@
 import { Spacing } from "@/constants/theme";
 import { useThemeColors } from "@/hooks/use-theme-colors";
+import { useTranslation } from "@/i18n/useTranslation";
 import { generateRecipePDF } from "@/utils/export";
 import { IRecipeForm } from "@/validations/recipe-schema";
 import { Image } from "expo-image";
@@ -15,12 +16,13 @@ type Props = {
 
 export const Recipes = ({ recipes }: Props) => {
   const colors = useThemeColors();
+  const { t } = useTranslation();
 
   return (
     <ThemedView
       style={[styles.container, { backgroundColor: colors.background }]}
     >
-      <ThemedText type="subtitle">Receitas</ThemedText>
+      <ThemedText type="subtitle">{t("recipes")}</ThemedText>
       {recipes.length > 0 ? (
         <ThemedView
           style={[styles.list, { backgroundColor: colors.background }]}
@@ -59,7 +61,7 @@ export const Recipes = ({ recipes }: Props) => {
                     <Image
                       style={{ width: 30, height: 30 }}
                       source={require("@/assets/images/icons/export.svg")}
-                      alt="Exportar"
+                      alt={t("export")}
                     />
                   </Pressable>
                 </ThemedView>
@@ -78,7 +80,7 @@ export const Recipes = ({ recipes }: Props) => {
           ))}
         </ThemedView>
       ) : (
-        <ThemedText>Nenhuma receita encontrada!</ThemedText>
+        <ThemedText>{t("no_recipe_found")}</ThemedText>
       )}
     </ThemedView>
   );

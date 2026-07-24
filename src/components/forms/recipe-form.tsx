@@ -7,6 +7,8 @@ import { ThemedView } from "@/components/themed-view";
 import { RECIPE_CATEGORIES_OPTIONS } from "@/constants/categories";
 import { MaxContentWidth, Spacing } from "@/constants/theme";
 import { useThemeColors } from "@/hooks/use-theme-colors";
+import { translations } from "@/i18n/translations";
+import { useTranslation } from "@/i18n/useTranslation";
 import { useCreateRecipe } from "@/requests/create-recipe";
 import { useUpdateRecipe } from "@/requests/update-recipe";
 import { onlyNumbersMask } from "@/utils/masks";
@@ -37,22 +39,23 @@ export function RecipeForm({ type = "register", formData }: Props) {
   const queryClient = useQueryClient();
   const router = useRouter();
   const colors = useThemeColors();
+  const { t } = useTranslation();
 
   const { mutate: createMutate, isPending: createIsPending } = useCreateRecipe({
     onSuccess: async () => {
-      Alert.alert("Sucesso", "Receita adicionada à sua lista local!");
+      Alert.alert(t("success_recipe_added"), t("success_recipe_added"));
       await queryClient.invalidateQueries({ queryKey: ["get-recipes"] });
       reset();
       router.replace("/(tabs)");
     },
     onError: () => {
-      Alert.alert("Erro", "Não foi possível salvar a receita na lista.");
+      Alert.alert(t("error_recipe_save"), t("error_recipe_save"));
     },
   });
 
   const { mutate: updateMutate, isPending: updateIsPending } = useUpdateRecipe({
     onSuccess: async () => {
-      Alert.alert("Sucesso", "Receita editada com sucesso!");
+      Alert.alert(t("success_recipe_edited"), t("success_recipe_edited"));
       reset();
       await queryClient.invalidateQueries({ queryKey: ["get-recipes"] });
       await queryClient.invalidateQueries({
@@ -61,7 +64,7 @@ export function RecipeForm({ type = "register", formData }: Props) {
       router.replace(`/recipes/${formData?.id}`);
     },
     onError: () => {
-      Alert.alert("Erro", "Não foi possível salvar a receita na lista.");
+      Alert.alert(t("error_recipe_save"), t("error_recipe_save"));
     },
   });
 
@@ -118,6 +121,11 @@ export function RecipeForm({ type = "register", formData }: Props) {
     }
   };
 
+  const categoryOptions = RECIPE_CATEGORIES_OPTIONS.map((option) => ({
+    ...option,
+    label: t(option.labelKey as keyof typeof translations.pt),
+  }));
+
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
       <ThemedView
@@ -133,7 +141,7 @@ export function RecipeForm({ type = "register", formData }: Props) {
               style={[styles.main, { backgroundColor: colors.background }]}
             >
               <Header
-                name={type === "register" ? "Nova receita" : "Editar receita"}
+                name={type === "register" ? t("new_recipe") : t("edit_recipe")}
                 onBack={
                   type === "edit"
                     ? () => router.replace(`/recipes/${formData?.id}`)
@@ -146,35 +154,35 @@ export function RecipeForm({ type = "register", formData }: Props) {
                   { backgroundColor: colors.background },
                 ]}
               >
-                <ImageInput name="image" label="Imagem" control={control} />
+                <ImageInput name="image" label={t("image")} control={control} />
                 <Input
                   name="name"
-                  label="Nome"
+                  label={t("name")}
                   control={control}
-                  placeholder="Digite o nome"
+                  placeholder={t("enter_name")}
                 />
                 <Input
                   name="description"
-                  label="Descrição"
-                  description="(opcional)"
+                  label={t("description")}
+                  description={t("optional")}
                   control={control}
-                  placeholder="Digite a descrição"
+                  placeholder={t("enter_description")}
                 />
                 <Select
                   name="category"
-                  label="Categoria"
+                  label={t("category")}
                   control={control}
-                  placeholder="Selecione a categoria"
-                  options={RECIPE_CATEGORIES_OPTIONS}
+                  placeholder={t("select_category")}
+                  options={categoryOptions}
                 />
                 <Input
                   name="time"
-                  label="Tempo de preparo"
+                  label={t("prep_time")}
                   keyboardType="number-pad"
-                  description="(opcional)"
+                  description={t("optional")}
                   maskFunction={onlyNumbersMask}
                   control={control}
-                  placeholder="Digite o tempo em minutos"
+                  placeholder={t("enter_time")}
                 />
                 <ThemedView
                   style={[
@@ -183,7 +191,7 @@ export function RecipeForm({ type = "register", formData }: Props) {
                   ]}
                 >
                   <ThemedText type="subtitle" themeColor="terciary">
-                    Ingredientes
+                    {t("ingredients")}
                   </ThemedText>
                   <ThemedView
                     style={[
@@ -216,13 +224,14 @@ export function RecipeForm({ type = "register", formData }: Props) {
                                   description: "",
                                 })
                               }
-                              accessibilityLabel={`add-ingredient`}
+                              accessibilityLabel={t("add_ingredient")}
                               accessibilityRole="button"
+                              testID="add-ingredient"
                             >
                               <Image
                                 style={{ width: 16, height: 16 }}
                                 source={require("@/assets/images/icons/plus.svg")}
-                                alt="Adicionar"
+                                alt={t("add")}
                               />
                             </Pressable>
                           )}
@@ -235,13 +244,14 @@ export function RecipeForm({ type = "register", formData }: Props) {
                                   backgroundColor: colors.warning,
                                 }}
                                 onPress={() => ingredientRemove(index)}
-                                accessibilityLabel={`remove-ingredient-${index}`}
+                                accessibilityLabel={t("remove_ingredient")}
                                 accessibilityRole="button"
+                                testID={`remove-ingredient-${index}`}
                               >
                                 <Image
                                   style={{ width: 16, height: 16 }}
                                   source={require("@/assets/images/icons/trash.svg")}
-                                  alt="Remover"
+                                  alt={t("remove")}
                                 />
                               </Pressable>
                             )}
@@ -249,7 +259,7 @@ export function RecipeForm({ type = "register", formData }: Props) {
                         <Input
                           control={control}
                           name={`ingredients.${index}.description`}
-                          placeholder="Digite a descrição"
+                          placeholder={t("enter_description")}
                           accessibilityLabel={`ingredient-${index}`}
                         />
                       </ThemedView>
@@ -268,7 +278,7 @@ export function RecipeForm({ type = "register", formData }: Props) {
                   ]}
                 >
                   <ThemedText type="subtitle" themeColor="terciary">
-                    Preparo
+                    {t("preparation")}
                   </ThemedText>
                   <ThemedView style={styles.field_array_inputs}>
                     {stepFields.map((field, index) => (
@@ -296,13 +306,14 @@ export function RecipeForm({ type = "register", formData }: Props) {
                                   description: "",
                                 })
                               }
-                              accessibilityLabel={`add-step`}
+                              accessibilityLabel={t("add_step")}
                               accessibilityRole="button"
+                              testID="add-step"
                             >
                               <Image
                                 style={{ width: 16, height: 16 }}
                                 source={require("@/assets/images/icons/plus.svg")}
-                                alt="Adicionar"
+                                alt={t("add")}
                               />
                             </Pressable>
                           )}
@@ -315,13 +326,14 @@ export function RecipeForm({ type = "register", formData }: Props) {
                                   backgroundColor: colors.warning,
                                 }}
                                 onPress={() => stepRemove(index)}
-                                accessibilityLabel={`remove-step-${index}`}
+                                accessibilityLabel={t("remove_step")}
                                 accessibilityRole="button"
+                                testID={`remove-step-${index}`}
                               >
                                 <Image
                                   style={{ width: 16, height: 16 }}
                                   source={require("@/assets/images/icons/trash.svg")}
-                                  alt="Remover"
+                                  alt={t("remove")}
                                 />
                               </Pressable>
                             )}
@@ -329,7 +341,7 @@ export function RecipeForm({ type = "register", formData }: Props) {
                         <Input
                           control={control}
                           name={`steps.${index}.description`}
-                          placeholder="Digite a descrição"
+                          placeholder={t("enter_description")}
                           accessibilityLabel={`step-${index}`}
                         />
                       </ThemedView>
@@ -348,7 +360,7 @@ export function RecipeForm({ type = "register", formData }: Props) {
                 disabled={createIsPending || updateIsPending}
                 onPress={handleSubmit(onSubmit)}
               >
-                Salvar
+                {t("save")}
               </ThemedButton>
             </ThemedView>
           </ScrollView>

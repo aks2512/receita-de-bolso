@@ -64,14 +64,14 @@ describe("RecipeForm", () => {
   });
 
   it("adds and removes ingredient inputs", async () => {
-    const { getAllByLabelText, getByLabelText } = renderWithQuery(
+    const { getAllByLabelText, getByTestId, getAllByTestId } = renderWithQuery(
       <RecipeForm type="register" />,
     );
 
     // initially X ingredient inputs
     const before = getAllByLabelText(/ingredient-/).length;
 
-    fireEvent.press(getByLabelText("add-ingredient"));
+    fireEvent.press(getByTestId("add-ingredient"));
 
     await waitFor(() => {
       expect(getAllByLabelText(/ingredient-/).length).toBeGreaterThan(before);
@@ -82,7 +82,7 @@ describe("RecipeForm", () => {
     const maxIterations = 5;
     let iter = 0;
     while (current > before && iter < maxIterations) {
-      const removes = getAllByLabelText(/remove-ingredient-/);
+      const removes = getAllByTestId(/remove-ingredient-/);
       const lastRemove = removes[removes.length - 1];
       fireEvent.press(lastRemove);
       // wait for a decrease
@@ -99,13 +99,13 @@ describe("RecipeForm", () => {
   });
 
   it("adds and removes step inputs", async () => {
-    const { getAllByLabelText, getByLabelText } = renderWithQuery(
+    const { getAllByLabelText, getByTestId, getAllByTestId } = renderWithQuery(
       <RecipeForm type="register" />,
     );
 
     const beforeSteps = getAllByLabelText(/step-/).length;
 
-    fireEvent.press(getByLabelText("add-step"));
+    fireEvent.press(getByTestId("add-step"));
 
     await waitFor(() => {
       expect(getAllByLabelText(/step-/).length).toBeGreaterThan(beforeSteps);
@@ -115,7 +115,7 @@ describe("RecipeForm", () => {
     const maxStepIters = 5;
     let stepIter = 0;
     while (currentSteps > beforeSteps && stepIter < maxStepIters) {
-      const stepRemoves = getAllByLabelText(/remove-step-/);
+      const stepRemoves = getAllByTestId(/remove-step-/);
       const lastStepRemove = stepRemoves[stepRemoves.length - 1];
       fireEvent.press(lastStepRemove);
       // eslint-disable-next-line no-await-in-loop

@@ -1,8 +1,12 @@
 import { Input } from "@/components/inputs/input";
+import Select from "@/components/inputs/select";
 import { ThemedButton } from "@/components/themed-button";
 import { ThemedView } from "@/components/themed-view";
+import { LANGUAGE_OPTIONS } from "@/constants/languages";
 import { MaxContentWidth, Spacing } from "@/constants/theme";
 import { useThemeColors } from "@/hooks/use-theme-colors";
+import { translations } from "@/i18n/translations";
+import { useTranslation } from "@/i18n/useTranslation";
 import { useConfigStore } from "@/stores/useConfigStore";
 import { STORAGE_KEYS } from "@/utils/storage-keys";
 import { ConfigSchema, IConfigForm } from "@/validations/config-schema";
@@ -29,6 +33,12 @@ export function ConfigForm({ type = "register", formData }: Props) {
   const colors = useThemeColors();
   const router = useRouter();
   const setConfig = useConfigStore((state) => state.setConfig);
+  const { t } = useTranslation();
+
+  const languageOptions = LANGUAGE_OPTIONS.map((option) => ({
+    ...option,
+    label: t(option.labelKey as keyof typeof translations.pt),
+  }));
 
   const { control, handleSubmit, watch } = useForm({
     mode: "onChange",
@@ -43,17 +53,17 @@ export function ConfigForm({ type = "register", formData }: Props) {
           STORAGE_KEYS.gemini_key,
           form.gemini_api_key,
         );
-        Alert.alert("Sucesso", "API key adicionado com sucesso!");
+        Alert.alert(t("success_api_added"), t("success_api_added"));
         router.replace("/(tabs)");
       } else {
         await SecureStore.setItemAsync(
           STORAGE_KEYS.gemini_key,
           form.gemini_api_key,
         );
-        Alert.alert("Sucesso", "API key editada com sucesso!");
+        Alert.alert(t("success_api_edited"), t("success_api_edited"));
       }
     } catch {
-      Alert.alert("Erro", "Não foi possível salvar a API key");
+      Alert.alert(t("error_api_save"), t("error_api_save"));
     }
   };
 
@@ -64,6 +74,7 @@ export function ConfigForm({ type = "register", formData }: Props) {
         font_size: values.font_size || 100,
         letter_case: values.letter_case || "capitalize",
         font_weight: values.font_weight || "default",
+        language: values.language || "pt",
       });
     });
     return () => subscription.unsubscribe();
@@ -83,14 +94,18 @@ export function ConfigForm({ type = "register", formData }: Props) {
             <ThemedView
               style={[styles.main, { backgroundColor: colors.background }]}
             >
-              <Header name="Configuração" />
+              <Header name={t("configuration")} />
 
               <ThemedView style={styles.input_group}>
-                <ThemeSelector name="theme" label="Tema" control={control} />
+                <ThemeSelector
+                  name="theme"
+                  label={t("theme")}
+                  control={control}
+                />
                 <RangeInput
                   name="font_size"
                   control={control}
-                  label="Tamanho da fonte"
+                  label={t("font_size")}
                   minimumValue={80}
                   maximumValue={150}
                   step={1}
@@ -98,27 +113,34 @@ export function ConfigForm({ type = "register", formData }: Props) {
                 />
                 <LetterCaseSelector
                   name="letter_case"
-                  label="Caixa de letra"
+                  label={t("letter_case")}
                   control={control}
                 />
                 <WeightSelector
                   name="font_weight"
-                  label="Peso da fonte"
+                  label={t("font_weight")}
                   control={control}
+                />
+                <Select
+                  name="language"
+                  control={control}
+                  label={t("language")}
+                  placeholder={t("language")}
+                  options={languageOptions}
                 />
               </ThemedView>
               <Input
                 name="key"
-                label="Gemini API key"
+                label={t("api_key")}
                 control={control}
-                placeholder="Digite a API key"
+                placeholder={t("api_key")}
               />
               <ThemedButton
                 type="title"
                 themeColor="primary"
                 onPress={handleSubmit(onSubmit)}
               >
-                Salvar
+                {t("save")}
               </ThemedButton>
             </ThemedView>
           </ScrollView>

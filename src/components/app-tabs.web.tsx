@@ -8,22 +8,25 @@ import {
 } from "expo-router/ui";
 import { Pressable, StyleSheet } from "react-native";
 
+import { useTranslation } from "@/i18n/useTranslation";
 import { ThemedText } from "./themed-text";
 import { ThemedView } from "./themed-view";
 
 import { MaxContentWidth, Spacing } from "@/constants/theme";
 
 export default function AppTabs() {
+  const { t } = useTranslation();
+
   return (
     <Tabs>
       <TabSlot style={{ height: "100%" }} />
       <TabList asChild>
-        <CustomTabList>
+        <CustomTabList t={t}>
           <TabTrigger name="home" href="/" asChild>
-            <TabButton>Home</TabButton>
+            <TabButton>{t("home")}</TabButton>
           </TabTrigger>
           <TabTrigger name="new-recipe" href="/new-recipe" asChild>
-            <TabButton>Nova Receita</TabButton>
+            <TabButton>{t("new_recipe")}</TabButton>
           </TabTrigger>
         </CustomTabList>
       </TabList>
@@ -53,12 +56,16 @@ export function TabButton({
   );
 }
 
-export function CustomTabList(props: TabListProps) {
+type CustomTabListProps = TabListProps & {
+  t: (key: keyof typeof translations.pt) => string;
+};
+
+export function CustomTabList({ t, ...props }: CustomTabListProps) {
   return (
     <ThemedView {...props} style={styles.tabListContainer}>
       <ThemedView type="backgroundElement" style={styles.innerContainer}>
         <ThemedText type="small" style={styles.brandText}>
-          Receita de Bolso
+          {t("app_name")}
         </ThemedText>
 
         {props.children}

@@ -17,6 +17,7 @@ export const useConfigStore = create<ConfigState>()(
         font_size: 100,
         letter_case: "none",
         font_weight: "default",
+        language: "pt",
       },
       setConfig: (newConfig) =>
         set(() => ({

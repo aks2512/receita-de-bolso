@@ -1,5 +1,6 @@
 import { Spacing } from "@/constants/theme";
 import { useThemeColors } from "@/hooks/use-theme-colors";
+import { useTranslation } from "@/i18n/useTranslation";
 import { Image } from "expo-image";
 import React, { ComponentProps } from "react";
 import { Controller } from "react-hook-form";
@@ -13,6 +14,7 @@ type Props = Omit<ComponentProps<typeof TextInput>, "style"> & {
 
 export const SearchInput = ({ name, control, ...rest }: Props) => {
   const colors = useThemeColors();
+  const { t } = useTranslation();
 
   return (
     <Controller
@@ -39,7 +41,7 @@ export const SearchInput = ({ name, control, ...rest }: Props) => {
           />
           <Image
             style={styles.image}
-            alt="Pesquisar"
+            alt={t("search")}
             source={require("@/assets/images/icons/search.svg")}
           />
         </ThemedView>

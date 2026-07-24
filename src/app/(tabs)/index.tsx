@@ -11,6 +11,8 @@ import { RECIPE_CATEGORIES } from "@/constants/categories";
 import { MaxContentWidth, Spacing } from "@/constants/theme";
 import { useDebounce } from "@/hooks/use-debounce";
 import { useThemeColors } from "@/hooks/use-theme-colors";
+import { translations } from "@/i18n/translations";
+import { useTranslation } from "@/i18n/useTranslation";
 import { useGetRecipes } from "@/requests/get-recipe";
 import { ISearchForm, SearchSchema } from "@/validations/search-schema";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -30,9 +32,15 @@ export default function HomeScreen() {
     },
   });
 
+  const { t } = useTranslation();
   const searchValue = watch("search");
   const debouncedSearchValue = useDebounce(searchValue, 600);
   const [selectedCategory, setSelectedCategory] = useState("all");
+
+  const categories = RECIPE_CATEGORIES.map((category) => ({
+    ...category,
+    text: t(category.textKey as keyof typeof translations.pt),
+  }));
 
   const { data: recipes, isPending } = useGetRecipes({
     search: debouncedSearchValue,
@@ -56,27 +64,27 @@ export default function HomeScreen() {
           <ThemedView
             style={[styles.main, { backgroundColor: colors.background }]}
           >
-            <Header name="Home" />
+            <Header name={t("home")} />
             <Pressable onPress={() => router.replace("/new-recipe")}>
               <ThemedView type="primary" style={styles.button}>
                 <Image
                   style={{ width: 24, height: 24, tintColor: colors.white }}
                   source={require("@/assets/images/icons/recipe.svg")}
-                  alt="Adicionar receita"
+                  alt={t("add_recipe")}
                 />
                 <ThemedText themeColor="white" style={{ flex: 0 }}>
-                  Adicionar Receita
+                  {t("add_recipe")}
                 </ThemedText>
               </ThemedView>
             </Pressable>
             <SearchInput
               name="search"
               control={control}
-              placeholder="Buscar receita"
+              placeholder={t("search_recipe")}
             />
 
             <Categories
-              categories={RECIPE_CATEGORIES}
+              categories={categories}
               selected={selectedCategory}
               onChange={handleCategory}
             />

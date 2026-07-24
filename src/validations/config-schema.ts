@@ -14,6 +14,10 @@ export const ConfigSchema = yup.object({
     .mixed<"light" | "regular" | "medium" | "semibold" | "bold" | "default">()
     .default("default")
     .required("Campo obrigatório"),
+  language: yup
+    .mixed<"pt" | "en">()
+    .default("pt")
+    .required("Campo obrigatório"),
   gemini_api_key: yup.string().required("Campo obrigatório"),
 });
 

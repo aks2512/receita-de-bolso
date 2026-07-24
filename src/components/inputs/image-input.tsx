@@ -1,5 +1,6 @@
 import { Spacing } from "@/constants/theme";
 import { useThemeColors } from "@/hooks/use-theme-colors";
+import { useTranslation } from "@/i18n/useTranslation";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import { Controller } from "react-hook-form";
@@ -17,15 +18,14 @@ type Props = {
 export function ImageInput({ name, label, control, description }: Props) {
   const colors = useThemeColors();
 
+  const { t } = useTranslation();
+
   const pickFromLibrary = async (): Promise<string | null> => {
     const permissionResult =
       await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (!permissionResult.granted) {
-      Alert.alert(
-        "Permissão necessária",
-        "Você precisa permitir o acesso à galeria para escolher uma foto.",
-      );
+      Alert.alert(t("permission_needed"), t("permission_gallery"));
       return null;
     }
 
@@ -46,10 +46,7 @@ export function ImageInput({ name, label, control, description }: Props) {
     const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
 
     if (!permissionResult.granted) {
-      Alert.alert(
-        "Permissão necessária",
-        "Você precisa permitir o acesso à câmera para tirar uma foto.",
-      );
+      Alert.alert(t("permission_needed"), t("permission_camera"));
       return null;
     }
 
@@ -66,16 +63,16 @@ export function ImageInput({ name, label, control, description }: Props) {
   };
 
   const pickImage = (onChange: (uri: string | null) => void) => {
-    Alert.alert("Adicionar imagem", "De onde você quer pegar a foto?", [
+    Alert.alert(t("add_image_title"), t("add_image_question"), [
       {
-        text: "Câmera",
+        text: t("image_camera"),
         onPress: async () => onChange(await pickFromCamera()),
       },
       {
-        text: "Galeria",
+        text: t("image_gallery"),
         onPress: async () => onChange(await pickFromLibrary()),
       },
-      { text: "Cancelar", style: "cancel" },
+      { text: t("cancel"), style: "cancel" },
     ]);
   };
 
@@ -124,7 +121,7 @@ export function ImageInput({ name, label, control, description }: Props) {
                     <Image
                       style={{ width: 16, height: 16 }}
                       source={require("@/assets/images/icons/trash.svg")}
-                      alt="Remover"
+                      alt={t("remove")}
                     />
                   </Pressable>
                 </ThemedView>
@@ -136,10 +133,10 @@ export function ImageInput({ name, label, control, description }: Props) {
                   <Image
                     style={{ width: 100, height: 100 }}
                     source={require("@/assets/images/icons/upload.svg")}
-                    alt="Upload"
+                    alt={t("upload_image")}
                   />
                   <ThemedText themeColor="quaternary">
-                    Adicione uma imagem
+                    {t("upload_image")}
                   </ThemedText>
                 </ThemedView>
               )}
