@@ -41,7 +41,12 @@ export function ConfigForm({ type = "register", formData }: Props) {
     label: t(option.labelKey as keyof typeof translations.pt),
   }));
 
-  const { control, handleSubmit, watch } = useForm({
+  const {
+    control,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm({
     mode: "onChange",
     resolver: yupResolver(ConfigSchema),
     defaultValues: formData,
@@ -133,7 +138,7 @@ export function ConfigForm({ type = "register", formData }: Props) {
                 />
               </ThemedView>
               <Input
-                name="key"
+                name="gemini_api_key"
                 label={t("api_key")}
                 control={control}
                 placeholder={t("api_key")}

@@ -72,6 +72,8 @@
   },
   "scripts": {
     "start": "expo start",
+    "build:new": "eas build --profile preview --platform android",
+    "build:update": "eas update --branch preview --platform android",
     "db:generate": "cross-env NODE_OPTIONS=--no-experimental-strip-types drizzle-kit generate",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo run:android",

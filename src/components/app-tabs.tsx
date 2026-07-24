@@ -41,6 +41,7 @@ export default function AppTabs() {
             fontSize: 16 * fontSizeMult,
             fontWeight: "regular",
             height: 40,
+            width: "100%",
           },
           tabBarIcon: ({ color }) => (
             <Image
@@ -60,6 +61,7 @@ export default function AppTabs() {
             fontSize: 16 * fontSizeMult,
             fontWeight: "regular",
             height: 40,
+            width: "100%",
           },
           tabBarIcon: ({ color }) => (
             <Image
