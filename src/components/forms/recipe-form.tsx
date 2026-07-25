@@ -355,8 +355,6 @@ export function RecipeForm({ type = "register", formData }: Props) {
                 </ThemedView>
               </ThemedView>
               <ThemedButton
-                type="title"
-                themeColor="primary"
                 disabled={createIsPending || updateIsPending}
                 onPress={handleSubmit(onSubmit)}
               >
@@ -420,7 +418,5 @@ const styles = StyleSheet.create({
   button: {
     padding: Spacing.two,
     borderRadius: Spacing.two,
-    flex: 1,
-    width: "100%",
   },
 });

@@ -1,7 +1,9 @@
-import { Fonts, Spacing, ThemeColor } from "@/constants/theme";
-import { useTheme } from "@/hooks/use-theme";
-import { Platform, Pressable, PressableProps, StyleSheet } from "react-native";
+import { Spacing, ThemeColor } from "@/constants/theme";
+import { useThemeColors } from "@/hooks/use-theme-colors";
+import { Image } from "expo-image";
+import { Pressable, PressableProps, StyleSheet } from "react-native";
 import { ThemedText } from "./themed-text";
+import { ThemedView } from "./themed-view";
 
 export type ThemedButtonProps = PressableProps & {
   type?:
@@ -13,24 +15,26 @@ export type ThemedButtonProps = PressableProps & {
     | "linkPrimary"
     | "code";
   themeColor?: ThemeColor;
-  children: string; // Obriga a passar um texto dentro do botão
+  image?: any;
+  children: string;
 };
 
 export function ThemedButton({
   style,
-  type = "title",
+  type = "subtitle",
   themeColor = "primary",
   children,
+  image,
   ...rest
 }: ThemedButtonProps) {
-  const theme = useTheme();
+  const colors = useThemeColors();
 
-  const BackgroundColor = theme[themeColor ?? "primary"];
+  const BackgroundColor = colors[themeColor ?? "primary"];
 
   return (
     <Pressable
       style={(state) => [
-        styles.buttonBase,
+        styles.button_base,
         {
           backgroundColor: BackgroundColor,
         },
@@ -40,15 +44,26 @@ export function ThemedButton({
       accessibilityLabel={children}
       {...rest}
     >
-      <ThemedText style={[{ color: "#ffffff" }, styles[type]]}>
-        {children}
-      </ThemedText>
+      <ThemedView
+        style={[styles.button_container, { backgroundColor: BackgroundColor }]}
+      >
+        {image && (
+          <Image
+            style={{ width: 24, height: 24, tintColor: colors.white }}
+            source={image}
+            alt={children}
+          />
+        )}
+        <ThemedText type={type} style={{ flex: 0 }} themeColor="white">
+          {children}
+        </ThemedText>
+      </ThemedView>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  buttonBase: {
+  button_base: {
     paddingVertical: Spacing.two,
     paddingHorizontal: Spacing.three,
     borderRadius: Spacing.two,
@@ -56,44 +71,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     color: "#ffffff",
   },
-  small: {
-    fontFamily: Fonts.opensans_light,
-    fontSize: 14,
-    lineHeight: 20,
-    fontWeight: 300,
-  },
-  default: {
-    fontFamily: Fonts.opensans_regular,
-    fontSize: 16,
-    lineHeight: 24,
-    fontWeight: 400,
-  },
-  title: {
-    fontFamily: Fonts.poppins_semibold,
-    fontSize: 24,
-    fontWeight: 600,
-    lineHeight: 32,
-  },
-  subtitle: {
-    fontFamily: Fonts.poppins_semibold,
-    fontSize: 20,
-    lineHeight: 28,
-    fontWeight: 600,
-  },
-  link: {
-    fontFamily: Fonts.opensans_regular,
-    lineHeight: 30,
-    fontSize: 14,
-  },
-  linkPrimary: {
-    fontFamily: Fonts.opensans_regular,
-    lineHeight: 30,
-    fontSize: 14,
-    color: "#3c87f7",
-  },
-  code: {
-    fontFamily: Fonts.opensans_regular,
-    fontWeight: Platform.select({ android: 700 }) ?? 500,
-    fontSize: 12,
+  button_container: {
+    gap: Spacing.two,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

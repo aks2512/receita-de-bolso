@@ -138,11 +138,7 @@ export function ConfigForm({ type = "register", formData }: Props) {
                 control={control}
                 placeholder={t("api_key")}
               />
-              <ThemedButton
-                type="title"
-                themeColor="primary"
-                onPress={handleSubmit(onSubmit)}
-              >
+              <ThemedButton onPress={handleSubmit(onSubmit)}>
                 {t("save")}
               </ThemedButton>
             </ThemedView>

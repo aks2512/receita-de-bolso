@@ -1,11 +1,11 @@
-import { Platform, Pressable, ScrollView, StyleSheet } from "react-native";
+import { Platform, ScrollView, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Categories } from "@/components/categories";
 import { Header } from "@/components/header";
 import { SearchInput } from "@/components/inputs/search-input";
 import { Recipes } from "@/components/recipes";
-import { ThemedText } from "@/components/themed-text";
+import { ThemedButton } from "@/components/themed-button";
 import { ThemedView } from "@/components/themed-view";
 import { RECIPE_CATEGORIES } from "@/constants/categories";
 import { MaxContentWidth, Spacing } from "@/constants/theme";
@@ -16,7 +16,6 @@ import { useTranslation } from "@/i18n/useTranslation";
 import { useGetRecipes } from "@/requests/get-recipe";
 import { ISearchForm, SearchSchema } from "@/validations/search-schema";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -65,18 +64,12 @@ export default function HomeScreen() {
             style={[styles.main, { backgroundColor: colors.background }]}
           >
             <Header name={t("home")} />
-            <Pressable onPress={() => router.replace("/new-recipe")}>
-              <ThemedView type="primary" style={styles.button}>
-                <Image
-                  style={{ width: 24, height: 24, tintColor: colors.white }}
-                  source={require("@/assets/images/icons/recipe.svg")}
-                  alt={t("add_recipe")}
-                />
-                <ThemedText themeColor="white" style={{ flex: 0 }}>
-                  {t("add_recipe")}
-                </ThemedText>
-              </ThemedView>
-            </Pressable>
+            <ThemedButton
+              image={require("@/assets/images/icons/recipe.svg")}
+              onPress={() => router.replace("/new-recipe")}
+            >
+              {t("add_recipe")}
+            </ThemedButton>
             <SearchInput
               name="search"
               control={control}
@@ -133,5 +126,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     gap: Spacing.two,
+    flex: 1,
   },
 });
