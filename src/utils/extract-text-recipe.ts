@@ -4,7 +4,7 @@ import * as SecureStore from "expo-secure-store";
 import { Alert } from "react-native";
 import { STORAGE_KEYS } from "./storage-keys";
 
-export const processSharedLink = async (videoUrl: string) => {
+export const processSharedText = async (videoUrl: string) => {
   try {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     const match = videoUrl.match(urlRegex);
@@ -20,13 +20,13 @@ export const processSharedLink = async (videoUrl: string) => {
     const ai = new GoogleGenAI({ apiKey: savedKey });
 
     const prompt = `
-      Você é um extrator especializado em transformar vídeos do YouTube em receitas culinárias estruturadas em JSON.
+      Você é um extrator especializado em transformar textos de receitas culinárias em JSON estruturado.
 
       ENTRADA
-      Você receberá a transcrição, a descrição e os metadados (título, tags, etc.) de um vídeo do YouTube.
+      Você receberá um texto livre contendo uma receita (pode estar bem formatada, em formato de post, mensagem informal, lista solta de ingredientes e modo de preparo, ou até um texto corrido misturando tudo).
 
       TAREFA
-      Analise todo o conteúdo fornecido e produza uma receita estruturada, mesmo que as informações estejam incompletas, implícitas ou espalhadas entre transcrição/descrição.
+      Analise todo o texto fornecido e produza uma receita estruturada, mesmo que as informações estejam incompletas, desorganizadas, informais ou implícitas.
 
       REGRAS DE SAÍDA (OBRIGATÓRIAS)
       - Responda APENAS com um objeto JSON válido, em português do Brasil.
@@ -47,25 +47,34 @@ export const processSharedLink = async (videoUrl: string) => {
 
       ESPECIFICAÇÃO DOS CAMPOS
       - "name": nome curto e claro da receita (máx. 60 caracteres), sem emojis.
+        - Se o texto não tiver um título explícito, infira um nome adequado a partir dos ingredientes/preparo.
       - "description": resumo do prato em uma frase (máx. 100 caracteres).
       - "time": tempo total estimado em minutos, número inteiro puro (sem "min", "h" ou texto).
-        - Se o vídeo mencionar tempo de preparo + cozimento, some tudo.
-        - Se não houver tempo explícito, estime um valor plausível com base no tipo de prato.
+        - Se o texto mencionar tempo de preparo + cozimento, some tudo.
+        - Se não houver tempo explícito, estime um valor plausível com base no tipo de prato e na complexidade do preparo descrito.
       - "ingredients": lista com pelo menos 3 itens.
-        - Cada item deve conter quantidade + unidade + nome do ingrediente (ex: "200g de açúcar", "2 colheres de sopa de sal", "1 unidade de cebola picada").
-        - Se a quantidade não for mencionada, estime uma quantidade razoável em vez de omitir.
+        - Extraia quantidade + unidade + nome do ingrediente (ex: "200g de açúcar", "2 colheres de sopa de sal", "1 unidade de cebola picada").
+        - Se a quantidade não estiver explícita no texto, estime uma quantidade razoável em vez de omitir o ingrediente.
+        - Normalize abreviações e formatos (ex: "c.s." → "colher de sopa", "1kg" → "1kg").
       - "steps": lista com pelo menos 3 itens, em ordem sequencial lógica.
+        - Se o texto já tiver passos numerados, apenas reorganize/limpe a redação.
+        - Se o texto estiver corrido (sem passos claros), divida o preparo em etapas lógicas.
         - Cada passo deve começar com um verbo de ação (ex: "Misture...", "Asse...", "Corte...").
         - Textos curtos e diretos (máx. 1-2 frases por passo).
 
-      REGRA PARA VÍDEOS SEM RECEITA
-      Se o conteúdo não for sobre culinária, crie uma receita fictícia plausível e coerente, inspirada no título ou tema do vídeo. Nunca retorne o JSON vazio, incompleto ou com campos genéricos como "N/A".
+      REGRA PARA TEXTOS SEM RECEITA CLARA
+      Se o texto fornecido não descrever uma receita de forma alguma (ex: for um assunto totalmente diferente), crie uma receita fictícia plausível e coerente, inspirada em qualquer palavra-chave relacionada a comida presente no texto, ou em um prato genérico caso nenhuma palavra-chave exista. Nunca retorne o JSON vazio, incompleto ou com campos genéricos como "N/A".
 
       VALIDAÇÃO FINAL (antes de responder)
       Confira mentalmente que:
       1. O JSON é sintaticamente válido.
       2. Todos os campos estão preenchidos com dados reais (não vazios).
       3. Não há texto fora do JSON.
+
+      TEXTO DA RECEITA:
+      """
+      {{recipe_text}}
+      """
     `;
 
     // A URL do vídeo é enviada como fileData, uma part separada do texto.

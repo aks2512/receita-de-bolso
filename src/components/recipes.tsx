@@ -40,7 +40,10 @@ export const Recipes = ({ recipes }: Props) => {
                 <ThemedView>
                   {item.time && (
                     <ThemedText
-                      style={styles.item_time}
+                      style={[
+                        styles.item_time,
+                        { backgroundColor: colors.background },
+                      ]}
                       type="small"
                       themeColor="terciary"
                     >
@@ -119,7 +122,6 @@ const styles = StyleSheet.create({
     zIndex: 1,
     padding: Spacing.two,
     borderRadius: Spacing.two,
-    backgroundColor: "#ffffff",
   },
   item_export: {
     position: "absolute",

@@ -420,5 +420,7 @@ const styles = StyleSheet.create({
   button: {
     padding: Spacing.two,
     borderRadius: Spacing.two,
+    flex: 1,
+    width: "100%",
   },
 });

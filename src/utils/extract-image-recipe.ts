@@ -42,24 +42,35 @@ export const processSharedImage = async (fileUri: string) => {
     const ai = new GoogleGenAI({ apiKey: savedKey });
 
     const prompt = `
-  Atue como um digitalizador estruturado de receitas.
-  Analise esta imagem, extraia os dados culinários em português e monte EXATAMENTE o objeto JSON abaixo.
-  Não adicione nenhuma palavra, comentário, explicação ou marcação markdown (\`\`\`json) antes ou depois do JSON:
+      Você é um digitalizador estruturado de receitas culinárias.
 
-  {
-    "name": "Nome claro da receita",
-    "description": "Resumo em uma frase do prato (máximo 100 caracteres)",
-    "time": "Total de minutos apenas como número inteiro, sem letras ou textos (ex: se for 1 hora coloque 60, se for 30 minutos coloque 30)",
-    "ingredients": [ 
-      { "description": "Quantidade, unidade de medida e nome do ingrediente (ex: '200g de açucar', '2 colheres de sal')" }
-    ],
-    "steps": [
-      { "description": "Texto descrevendo a instrução deste passo sequencial" }
-    ]
-  }
+      TAREFA:
+      Analise a imagem fornecida e extraia (ou, se necessário, infira) os dados da receita em português do Brasil. Retorne APENAS um objeto JSON válido, seguindo exatamente o schema abaixo.
 
-  Se a imagem não contiver uma receita clara ou estiver borrada, use as palavras visíveis para gerar uma receita criativa plausível, garantindo que o JSON nunca venha vazio.
-`;
+      SCHEMA (respeite tipos e chaves exatamente):
+      {
+        "name": string,              // Nome claro e específico da receita
+        "description": string,       // Resumo em 1 frase, máx. 100 caracteres
+        "time": integer,             // Tempo total em minutos, número inteiro puro (ex: 60, 30). Nunca string, nunca unidade de texto.
+        "ingredients": [
+          { "description": string }  // Ex: "200g de açúcar", "2 colheres de sopa de sal"
+        ],
+        "steps": [
+          { "description": string }  // Uma instrução por passo, em ordem sequencial
+        ]
+      }
+
+      REGRAS DE FORMATAÇÃO:
+      1. Responda SOMENTE com o JSON puro — sem texto antes ou depois, sem markdown, sem json, sem comentários.
+      2. O JSON deve ser válido (aspas duplas, sem vírgulas sobrando, sem campos extras, sem campos ausentes).
+      3. "time" deve ser sempre um número inteiro (int), nunca texto.
+      4. "ingredients" e "steps" nunca podem vir vazios — devem ter pelo menos 1 item cada.
+
+      REGRA PARA IMAGENS AMBÍGUAS OU BORRADAS:
+      Se a imagem não mostrar uma receita clara (estiver borrada, incompleta ou ilegível), use quaisquer palavras, ingredientes ou pistas visuais identificáveis para criar uma receita plausível e coerente com esses elementos. Nunca retorne o JSON vazio, incompleto ou com aviso de erro — sempre entregue uma receita completa e plausível.
+
+      Retorne agora apenas o objeto JSON.
+    `;
 
     const fotoProntaParaIA = {
       inlineData: {

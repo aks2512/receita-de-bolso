@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     gap: Spacing.two,
   },
   scroll_content: {
-    width: 120,
+    width: 140,
     borderRadius: Spacing.two,
     borderWidth: 1,
     padding: Spacing.one,

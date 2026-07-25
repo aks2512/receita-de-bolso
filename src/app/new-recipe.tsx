@@ -2,6 +2,7 @@ import { RecipeForm } from "@/components/forms/recipe-form";
 import { LoadingOverlay } from "@/components/loading-overlay";
 import { processSharedImage } from "@/utils/extract-image-recipe";
 import { processSharedLink } from "@/utils/extract-link-recipe";
+import { processSharedText } from "@/utils/extract-text-recipe";
 import { IRecipeForm } from "@/validations/recipe-schema";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
@@ -27,6 +28,9 @@ export default function NewRecipe() {
           setFormData(recipeData);
         } else if (type === "link") {
           const recipeData = await processSharedLink(content);
+          setFormData(recipeData);
+        } else if (type === "text") {
+          const recipeData = await processSharedText(content);
           setFormData(recipeData);
         }
       } catch (error) {

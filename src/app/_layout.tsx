@@ -64,11 +64,18 @@ const AppContent = () => {
           params: { type: "photo", content: shareIntent.files?.[0].path },
         });
         resetShareIntent();
-      } else if (shareIntent.webUrl || shareIntent.text) {
+      } else if (shareIntent.webUrl) {
         const linkFinal = shareIntent.webUrl || shareIntent.text;
         router.push({
           pathname: "/new-recipe",
           params: { type: "link", content: linkFinal },
+        });
+        resetShareIntent();
+      } else if (shareIntent.text) {
+        const text = shareIntent.text;
+        router.push({
+          pathname: "/new-recipe",
+          params: { type: "text", content: text },
         });
         resetShareIntent();
       }
