@@ -41,12 +41,7 @@ export function ConfigForm({ type = "register", formData }: Props) {
     label: t(option.labelKey as keyof typeof translations.pt),
   }));
 
-  const {
-    control,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm({
+  const { control, handleSubmit, watch } = useForm({
     mode: "onChange",
     resolver: yupResolver(ConfigSchema),
     defaultValues: formData,
