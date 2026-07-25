@@ -18,6 +18,7 @@ import {
   CustomDarkTheme,
   CustomLightTheme,
 } from "@/constants/navigation-theme";
+import { Colors } from "@/constants/theme";
 import { useConfigStore } from "@/stores/useConfigStore";
 import {
   OpenSans_300Light,
@@ -64,18 +65,12 @@ const AppContent = () => {
           params: { type: "photo", content: shareIntent.files?.[0].path },
         });
         resetShareIntent();
-      } else if (shareIntent.webUrl) {
-        const linkFinal = shareIntent.webUrl || shareIntent.text;
+      } else if (shareIntent.webUrl || shareIntent.text) {
+        const content = shareIntent.webUrl || shareIntent.text;
+        const isURL = /^https?:\/\/[^\s]+$/i.test(content?.trim() || "");
         router.push({
           pathname: "/new-recipe",
-          params: { type: "link", content: linkFinal },
-        });
-        resetShareIntent();
-      } else if (shareIntent.text) {
-        const text = shareIntent.text;
-        router.push({
-          pathname: "/new-recipe",
-          params: { type: "text", content: text },
+          params: { type: isURL ? "link" : "text", content },
         });
         resetShareIntent();
       }
@@ -102,7 +97,7 @@ const AppContent = () => {
                       headerShown: false,
                       gestureEnabled: false,
                       contentStyle: {
-                        backgroundColor: "#F9F9F9",
+                        backgroundColor: Colors.background,
                       },
                     }}
                   />
