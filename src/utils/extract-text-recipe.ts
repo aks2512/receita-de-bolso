@@ -4,12 +4,8 @@ import * as SecureStore from "expo-secure-store";
 import { Alert } from "react-native";
 import { STORAGE_KEYS } from "./storage-keys";
 
-export const processSharedText = async (videoUrl: string) => {
+export const processSharedText = async (text: string) => {
   try {
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    const match = videoUrl.match(urlRegex);
-    const cleanUrl = match ? match[0] : videoUrl;
-
     const savedKey = await SecureStore.getItemAsync(STORAGE_KEYS.gemini_key);
 
     if (!savedKey) {
@@ -77,15 +73,11 @@ export const processSharedText = async (videoUrl: string) => {
       """
     `;
 
-    // A URL do vídeo é enviada como fileData, uma part separada do texto.
     const response = await ai.models.generateContent({
       model: "gemini-3.1-flash-lite",
       contents: [
         {
-          fileData: {
-            fileUri: cleanUrl,
-            mimeType: "video/*",
-          },
+          text: text,
         },
         { text: prompt },
       ],
@@ -114,7 +106,7 @@ export const processSharedText = async (videoUrl: string) => {
     );
     Alert.alert(
       "Erro",
-      `Não foi possível analisar o link enviado.\n${error?.message ?? ""}`,
+      `Não foi possível analisar o texto enviado.\n${error?.message ?? ""}`,
     );
     return undefined;
   }
